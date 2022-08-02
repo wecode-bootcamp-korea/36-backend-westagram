@@ -55,6 +55,27 @@ app.get('/data', function(req, res){
     })
 })
 
+app.get('/data/:id', function(req, res){
+    const id = req.params.id
+    const query = myDataSource.query(`select users.id as userId, profile_image as userProfileImage, posts.id as postingId, imageurl as postingImageUrl, content as postingContent from users inner join posts on users.id =
+    posts.user_id where users.id = ${id}`, (err, rows) => {
+        let postings = []
+        let data = {
+            userId: rows[0].userId,
+            userProfileImage: rows[0].userProfileImage,
+            postings:postings
+        }
+        for(let r of rows){
+            postings.push({
+                postingId: r.postingId,
+                postingImageUrl: r.postingImageUrl,
+                postingContent: r.postingContent
+            })
+        }
+        res.status(200).json({data : data});
+    })
+})
+
 app.listen(3000, function () {
   console.log('server listening on port 3000')
 })
