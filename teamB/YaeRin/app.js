@@ -52,6 +52,16 @@ app.post("/posts", async (req, res, next) => {
   res.status(201).json({ message: "New Post Created!" });
 });
 
+// GET all posts
+app.get("/posts", async (req, res) => {
+  await myDataSource.manager.query(
+    `SELECT p.id, p.title, p.description FROM posts p`,
+    (err, rows) => {
+      res.status(200).json(rows);
+    }
+  );
+});
+
 const server = http.createServer(app);
 const PORT = process.env.PORT;
 
