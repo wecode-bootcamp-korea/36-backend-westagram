@@ -98,6 +98,17 @@ app.patch("/posts", async (req, res) => {
   res.status(201).json({ message: "Posts Edited!" });
 });
 
+// DELETE post
+app.delete("/posts/:postId", async (req, res) => {
+  const { postId } = req.params;
+  await myDataSource.query(
+    `DELETE FROM posts
+    WHERE posts.id = ${postId}
+    `
+  );
+  res.status(200).json({ message: "Post Deleted!" });
+});
+
 const server = http.createServer(app);
 const PORT = process.env.PORT;
 
@@ -112,4 +123,4 @@ server.listen(PORT, serverListening);
 // http -v GET http://127.0.0.1:8000/posts-with-users
 // http -v GET http://127.0.0.1:8000/posts
 // http -v PATCH http://127.0.0.1:8000/posts postId='1' title="My Neighborhood Totoro" description="Totoro is cute"
-// http -v DELETE http://127.0.0.1:8000/posts postId='3'
+// http -v DELETE http://127.0.0.1:8000/posts/6
