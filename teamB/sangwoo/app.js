@@ -27,8 +27,27 @@ app.use(express.json());
 app.use(cors());
 app.use(morgan(""));
 
+// health check
 app.get("/ping", (reg, res) => {
-    res.json({ message: "pong" });
+    res.status(201).json({ message: "pong" });
+});
+
+// 회원가입 엔드포인트
+app.post("/sign-up", async (req, res) => {
+    const { name, email, password, profile_image } = req.body;
+
+    await myDataSource.query(
+        ` 
+        INSERT INTO users(
+            name,
+            email,
+            password,
+            profile_image
+        ) VALUES (?,?,?,?);
+        `,
+        [name, email, password, profile_image]
+    );
+    res.status(201).json({ message: "userCreated" });
 });
 
 const server = http.createServer(app);
