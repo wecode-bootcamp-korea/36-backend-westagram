@@ -40,7 +40,7 @@ app.get("/ping", (req, res) => {
 
 //signup
 app.post("/signup", async (req, res, next) => {
-  const {name, email, password} = req.body;
+  const { name, email, password } = req.body;
 
   await myDataSource.query(
     `INSERT INTO users(
@@ -48,12 +48,12 @@ app.post("/signup", async (req, res, next) => {
     ) VALUES (?, ?, ?);`,
     [name, email, password]
   );
-  res.status(201).json({message : "userCreated"});
+  res.status(201).json({ message: "userCreated" });
 });
 
 //posts
 app.post("/posts", async (req, res, next) => {
-  const {title, content} = req.body;
+  const { title, content } = req.body;
 
   await myDataSource.query(
     `INSERT INTO posts(
@@ -61,7 +61,18 @@ app.post("/posts", async (req, res, next) => {
     ) VALUES (?, ?);`,
     [title, content]
   );
-  res.status(201).json({message : "postCreated"});
+  res.status(201).json({ message: "postCreated" });
+});
+
+//posts list
+app.get("/posts/list", async (req, res, next) => {
+  await myDataSource.query(
+    `SELECT u.id as "userId", u.name as "userName", p.id as "postingId", p.title as "postingTitle", p.content as "postingContent" FROM users u inner join posts_users pu on u.id = pu.user_id inner join
+    posts p on pu.post_id = p.id order by u.id;`,
+    (error, rows) => {
+      res.status(200).json({ "data" : rows });
+    }
+  );
 });
 
 const server = http.createServer(app);
