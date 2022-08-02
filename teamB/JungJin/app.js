@@ -96,6 +96,12 @@ app.patch('/lists/:id', function(req, res){
     res.status(201).json({message: "UpdatedSuccess"});
 })
 
+app.delete('/posts/:id', function(req, res){
+    const id = req.params.id
+    const query = myDataSource.query(`DELETE FROM posts WHERE id = ${id}`)
+    res.status(204).json({message: "postingDeleted"});
+})
+
 app.listen(3000, function () {
   console.log('server listening on port 3000')
 })
