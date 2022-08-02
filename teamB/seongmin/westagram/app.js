@@ -28,7 +28,7 @@ myDataSource.initialize()
 
 //server health check
 app.get('/ping', (req, res) => {
-    res.status(200).json({ mesaage: 'pong' })
+    res.status(200).json({ message: 'pong' })
 });
 
 //모든 사용자 조회
@@ -98,7 +98,7 @@ app.post('/signUp', async (req, res) => {
         ) VALUES (?, ?, ?, ?);`,
         [name, email, profile_image, password]
     );
-    res.status(201).json({ mesaage: "userCreated" });
+    res.status(201).json({ message: "userCreated" });
 });
 
 //게시물 작성
@@ -111,6 +111,14 @@ app.post('/addPost', async (req, res) => {
     );
     res.status(201).json({ message: "postCreated" });
 });
+
+//좋아요 기능 구현
+app.post('/like/:postId/:userId', async (req, res) => {
+    const postId = req.params.postId;
+    const userId = req.params.userId;
+    await myDataSource.query(`INSERT INTO likes (post_id, user_id) VALUES (${postId}, ${userId})`);
+    await res.status(201).json({message : "likeCreated"});
+})
 
 //유저 게시물 수정
 app.patch('/updatePost/:userId/:postingId', async (req, res) => {
