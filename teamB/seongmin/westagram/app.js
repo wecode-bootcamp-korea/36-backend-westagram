@@ -24,7 +24,7 @@ const myDataSource = new DataSource({
 myDataSource.initialize()
     .then(() => {
         console.log('Data Source has been initialized!')
-    })
+    });
 
 //server health check
 app.get('/ping', (req, res) => {
@@ -84,7 +84,7 @@ app.get('/post/:userId', async (req, res) => {
         })
     });
 
-})
+});
 
 //회원가입
 app.post('/signUp', async (req, res) => {
@@ -127,7 +127,15 @@ app.patch('/updatePost/:userId/:postingId', async (req, res) => {
             `, (err, data) => {
         res.status(200).json({ data: data[0] });
     })
-})
+});
+
+//게시물 삭제
+app.delete('/posts/:postId', async (req, res) => {
+    const findPostId = req.params.postId;
+    console.log(findPostId);
+    await myDataSource.query(`DELETE FROM posts WHERE id = ?;`, [findPostId])
+    res.status(204).json({ message : "postingDelted"})
+});
 
 app.listen(PORT, () => {
     console.log(`server is listning on ${PORT}`);
