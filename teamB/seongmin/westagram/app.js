@@ -26,8 +26,31 @@ myDataSource.initialize()
     })
 
 app.get('/ping', (req,res)=> {
-    res.json({mesaage : 'pong'})
+    res.status(200).json({mesaage : 'pong'})
 });
+
+app.get('/users', async(req, res)=> {
+    await myDataSource.query(`
+    SELECT u.id, u.name, u.email, u.profile_image, u.created_at FROM users u 
+    `, (err, rows) => {
+        res.status(200).json(rows);
+    })
+});
+
+app.post('/signUp', async(req, res) => {
+    const { name, email, profile_image, password } = req.body;
+    await myDataSource.query(
+        `INSERT INTO users (
+            name,
+            email,
+            profile_image,
+            password
+        ) VALUES (?, ?, ?, ?);`,
+        [name, email, profile_image, password]
+    );
+
+    res.status(201).json({ mesaage: "userCreated"});
+})
 
 app.listen(PORT, () => {
     console.log(`server is listning on ${PORT}`);
