@@ -35,6 +35,19 @@ app.post('/users', function(req, res){
     res.status(201).json({message: "userCreated"});
 })
 
+app.get('/posts', function(req, res){
+    const query = myDataSource.query(`SELECT * FROM posts`, (err, rows) => {
+        res.status(200).json({posts : rows});
+    })
+})
+
+app.post('/posts', function(req, res){
+    const {title, content, user_id} = req.body
+    const sql = {title:title, content:content, user_id:user_id}
+    const query = myDataSource.query(`INSERT INTO posts set ?`, sql)
+    res.status(201).json({message: "postCreated"});
+})
+
 app.listen(3000, function () {
   console.log('server listening on port 3000')
 })
