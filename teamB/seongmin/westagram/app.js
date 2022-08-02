@@ -57,33 +57,33 @@ app.get('/posts', async (req, res) => {
 //유저 게시물 조회
 app.get('/post/:userId', async (req, res) => {
     const userId = req.params.userId;
-    const posts =[];
+    const posts = [];
     //유저 정보 조회
     await myDataSource.query(`SELECT
         u.id userId,
         u.profile_image userProfileImage
         FROM users u
         WHERE u.id = ${userId}`, (err, data) => {
-            const userData = data;
-            //해당 유저가 작성한 게시물 조회
-            myDataSource.query(`SELECT p.id postingId, p.title postingTitle, p.content postingContent 
+        const userData = data;
+        //해당 유저가 작성한 게시물 조회
+        myDataSource.query(`SELECT p.id postingId, p.title postingTitle, p.content postingContent 
             FROM posts p INNER JOIN users ON p.user_id = users.id WHERE users.id = ${userId};`, (err, datas) => {
-                for (const data of datas) {
-                    posts.push({
-                        postingId : data['postingId'],
-                        postingTitle : data['postingTitle'],
-                        postingContent : data['postingContent'],
-                    })
-                }
-                const user = {
-                    userId : userData[0]['userId'],
-                    userProfileImage : userData[0]['userProfileImage'],
-                    post : posts
-                }
-                res.status(200).json({data: user})
-            })
-        });
-    
+            for (const data of datas) {
+                posts.push({
+                    postingId: data['postingId'],
+                    postingTitle: data['postingTitle'],
+                    postingContent: data['postingContent'],
+                })
+            }
+            const user = {
+                userId: userData[0]['userId'],
+                userProfileImage: userData[0]['userProfileImage'],
+                post: posts
+            }
+            res.status(200).json({ data: user })
+        })
+    });
+
 })
 
 //회원가입
@@ -111,6 +111,23 @@ app.post('/addPost', async (req, res) => {
     );
     res.status(201).json({ message: "postCreated" });
 });
+
+//유저 게시물 수정
+app.patch('/updatePost/:userId/:postingId', async (req, res) => {
+    const findPostingId = req.params.postingId; //입력 받은 게시물 id
+    const findUserId = req.params.userId; //입력 받은 유저 id
+    const { postingTitle, postingContent } = req.body;
+    //해당 게시물 수정
+    await myDataSource.query(
+        `UPDATE posts SET title = "${postingTitle}", content = "${postingContent}" WHERE id = ${findPostingId};`)
+    //수정된 결과 출력
+    await myDataSource.query(`
+            SELECT u.id userID, u.name userName, p.id postingId, p.title postingTitle, p.content postingContent
+            FROM users u INNER JOIN posts p ON u.id = p.user_id WHERE u.id = ${findUserId} AND p.id = ${findPostingId};
+            `, (err, data) => {
+        res.status(200).json({ data: data[0] });
+    })
+})
 
 app.listen(PORT, () => {
     console.log(`server is listning on ${PORT}`);
