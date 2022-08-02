@@ -66,6 +66,24 @@ app.post("/posts", async (req, res) => {
     res.status(201).json({ message: "postCreated" });
 });
 
+app.get("/posts", async (req, res) => {
+    await myDataSource.manager.query(
+        `SELECT 
+            u.id AS userId,
+            u.profile_Image AS userProfileImage,
+            p.id AS postingId,
+            p.title AS postingTitle,
+            p.content AS postingContent
+        FROM users u
+        INNER JOIN posts p ON
+        u.id = p.user_id
+        `,
+        (err, rows) => {
+            res.status(200).json({ data: rows });
+        }
+    );
+});
+
 const server = http.createServer(app);
 const PORT = process.env.PORT;
 
