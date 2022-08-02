@@ -49,6 +49,22 @@ app.post("/sign-up", async (req, res) => {
     );
     res.status(201).json({ message: "userCreated" });
 });
+// 게시글 등록 엔드포인트
+app.post("/posts", async (req, res) => {
+    const { title, content, user_id } = req.body;
+
+    await myDataSource.query(
+        ` 
+        INSERT INTO posts(
+            title,
+            content,
+            user_id
+        ) VALUES (?,?,?);
+        `,
+        [title, content, user_id]
+    );
+    res.status(201).json({ message: "postCreated" });
+});
 
 const server = http.createServer(app);
 const PORT = process.env.PORT;
