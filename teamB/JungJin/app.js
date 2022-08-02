@@ -48,6 +48,13 @@ app.post('/posts', function(req, res){
     res.status(201).json({message: "postCreated"});
 })
 
+app.get('/data', function(req, res){
+    const query = myDataSource.query(`select users.id as userId, profile_image as userProfileImage, posts.id as postingId, imageurl as postingImageUrl, content as postingContent from users inner join posts on users.id =
+    posts.user_id`, (err, rows) => {
+        res.status(200).json({data : rows});
+    })
+})
+
 app.listen(3000, function () {
   console.log('server listening on port 3000')
 })
