@@ -54,12 +54,48 @@ app.post("/posts", async (req, res, next) => {
 
 // GET all posts
 app.get("/posts", async (req, res) => {
-  await myDataSource.manager.query(
+  await myDataSource.query(
     `SELECT p.id, p.title, p.description FROM posts p`,
     (err, rows) => {
       res.status(200).json(rows);
     }
   );
+});
+
+//GET 유저의 게시글 조회
+app.get("/posts-with-users", async (req, res) => {
+  const { userId, name, title, description } = req.body;
+  let arr = [];
+  await myDataSource.query(
+    `SELECT 
+    posts.id, 
+    posts.title, 
+    posts.description, 
+    users.name, 
+    users.age 
+    FROM users_posts ba 
+    INNER JOIN users ON ba.user_id = users.id 
+    INNER JOIN posts ON ba.post_id = posts.id`,
+    (err, rows) => {
+      res.status(200).json(rows);
+    }
+  );
+});
+
+// PATCH post
+app.patch("/posts", async (req, res) => {
+  const { title, description, postId } = req.body;
+
+  await myDataSource.query(
+    `UPDATE posts
+    SET
+    title = ?,
+    description = ?
+    WHERE id = ?
+    `,
+    [title, description, postId]
+  );
+  res.status(201).json({ message: "Posts Edited!" });
 });
 
 const server = http.createServer(app);
