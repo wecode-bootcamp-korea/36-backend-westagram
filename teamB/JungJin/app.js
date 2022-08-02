@@ -76,6 +76,26 @@ app.get('/data/:id', function(req, res){
     })
 })
 
+app.get('/lists', function(req, res){
+    const query = myDataSource.query(`select users.id as userId, users.name as userName, posts.id as postingId, posts.title as postingTitle, content as postingContent from users inner join posts on users.id = posts.user_id`, (err, rows) => {
+        res.status(200).json({data : rows});
+    })
+})
+
+app.get('/lists/:id', function(req, res){
+    const id = req.params.id
+    const query = myDataSource.query(`select users.id as userId, users.name as userName, posts.id as postingId, posts.title as postingTitle, content as postingContent from users inner join posts on users.id = posts.user_id where posts.id = ${id}`, (err, rows) => {
+        res.status(200).json({data : rows[id-1]});
+    })
+})
+
+app.patch('/lists/:id', function(req, res){
+    const id = req.params.id
+    const content = req.body.content
+    const query = myDataSource.query(`UPDATE posts SET ? WHERE id = ${id}`, {content:content})
+    res.status(201).json({message: "UpdatedSuccess"});
+})
+
 app.listen(3000, function () {
   console.log('server listening on port 3000')
 })
