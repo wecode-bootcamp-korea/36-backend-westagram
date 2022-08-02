@@ -18,6 +18,7 @@ app.use(cors())
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
 app.use(express.json());
 
+
 app.get('/ping', function(req, res){
     res.json({message: 'pong'})
 })
@@ -102,7 +103,20 @@ app.delete('/posts/:id', function(req, res){
     res.status(204).json({message: "postingDeleted"});
 })
 
+app.get('/likes', function(req, res){
+    const query = myDataSource.query(`select users.id as userId, users.name as 좋아요누른사람, posts.id as postsId, posts.title as 좋아요누른글 from users inner join likes on users.id = likes.user_id inner join posts on likes.post_id = posts.id order by users.id, posts.id`, (err, rows) => {
+        res.status(200).json({likes : rows});
+    })
+})
+
+app.post('/likes', function(req, res){
+    const {user_id, post_id} = req.body
+    const sql = {user_id:user_id, post_id:post_id}
+    const query = myDataSource.query(`INSERT INTO likes set ?`, sql)
+    res.status(201).json({message: "likeCreated"});
+})
+
+
 app.listen(3000, function () {
   console.log('server listening on port 3000')
 })
-
