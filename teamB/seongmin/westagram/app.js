@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const { DataSource } = require('typeorm');
+const { json } = require('express');
 require('dotenv').config();
 
 const app = express();
@@ -21,15 +22,15 @@ const myDataSource = new DataSource({
 });
 
 myDataSource.initialize()
-    .then(()=> {
+    .then(() => {
         console.log('Data Source has been initialized!')
     })
 
-app.get('/ping', (req,res)=> {
-    res.status(200).json({mesaage : 'pong'})
+app.get('/ping', (req, res) => {
+    res.status(200).json({ mesaage: 'pong' })
 });
 
-app.get('/users', async(req, res)=> {
+app.get('/users', async (req, res) => {
     await myDataSource.query(`
     SELECT u.id, u.name, u.email, u.profile_image, u.created_at FROM users u 
     `, (err, rows) => {
@@ -37,7 +38,20 @@ app.get('/users', async(req, res)=> {
     })
 });
 
-app.post('/signUp', async(req, res) => {
+app.get('/posts', async (req, res) => {
+    await myDataSource.query(`SELECT
+        u.id userId,
+        u.profile_image userProFileImage,
+        p.id postingId,
+        p.title postingTitle,
+        p.content postingContent 
+    FROM users u 
+    INNER JOIN posts p
+    on u.id = p.user_id;`,
+        (err, rows) => res.status(200).json({ data: rows }));
+});
+
+app.post('/signUp', async (req, res) => {
     const { name, email, profile_image, password } = req.body;
     await myDataSource.query(
         `INSERT INTO users (
@@ -49,8 +63,18 @@ app.post('/signUp', async(req, res) => {
         [name, email, profile_image, password]
     );
 
-    res.status(201).json({ mesaage: "userCreated"});
-})
+    res.status(201).json({ mesaage: "userCreated" });
+});
+
+app.post('/addPost', async (req, res) => {
+    const { title, content, user_id } = req.body;
+    await myDataSource.query(
+        `INSERT INTO posts (
+            title, content, user_id
+        ) VALUES (?, ?, ?);`, [title, content, user_id]
+    );
+    res.status(201).json({ message: "postCreated" });
+});
 
 app.listen(PORT, () => {
     console.log(`server is listning on ${PORT}`);
