@@ -74,6 +74,16 @@ app.get('/post', async (req,res)=>{
         `,(err,rows)=>res.status(200).json({MESSAGE : 'success!', data: rows})
     ); 
 })
+app.patch("/post", async (req, res)=>{
+    const {title, content,id} = req.body
+    console.log(title,content,id)
+    await myDataSource.query(
+        `
+        UPDATE posts SET title="${title}", content="${content}" WHERE id=${id};
+        ` //update 는 SET title="${title}", content="${content}" 처럼 따옴표를 꼭 넣어줘야 한다.
+        );
+        res.status(201).json({MESSAGE : 'success!'})
+})
 
 const server = http.createServer(app);
 
