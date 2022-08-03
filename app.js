@@ -31,6 +31,23 @@ app.get('/ping', function (req, res, next) {
   res.json({message: 'pong'});
 });
 
+app.post('/postman', async (req, res) => {
+const {name, gender, birth, contact, mbti} = req.body;
+
+  await myDataSource.query(
+    `INSERT INTO teamA(
+      name,
+      gender,
+      birth,
+      contact,
+      mbti
+    ) VALUES (?, ?, ?, ?, ?);`, [name, gender, birth, contact, mbti]);
+
+    res.status(201).json({message: 'userCreated'});
+});
+
+/*
+// Test requests
 app.get('/teamA', async (req, res) => {
   await myDataSource.query(
     `SELECT
@@ -53,7 +70,7 @@ app.post('/teamA', async (req, res) => {
 
   res.status(201).json({message: 'successfully created'})
 });
-
+*/
 const start = async () => {
   try {
     app.listen(port, () => {
