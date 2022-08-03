@@ -44,7 +44,6 @@ app.post("/usersignup", async (req, res)=>{
     res.status(201).json({MEASSAGE : 'created_success!'});
 })
 
-
 const server = http.createServer(app);
 
 const start = async ()=>{
