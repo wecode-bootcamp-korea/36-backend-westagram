@@ -30,7 +30,49 @@ app.use(express.json());
 
 app.get('/ping', function (req, res) {
   res.status(200).json({message: 'pong'})
-})
+});
+
+app.get('/viewAllPosts', async(req,res,next) => {
+    await myDataSource.query(
+        `SELECT 
+            posts.id,
+            posts.title,
+            posts.content,
+            posts.user_id
+        FROM posts
+        `, (err, rows) => {
+            res.status(200).json({"data" : rows})
+        }
+    );
+});
+
+app.post('/signup', async(req, res, next) => {
+   const  { name, email, password } = req.body;
+   await myDataSource.query(
+    `INSERT INTO users(
+        name,
+        email,
+        password
+    ) VALUES (?, ?, ?);
+    `,
+    [name, email, password]
+   );
+   res.status(201).json({ message : "userCreated"})
+});
+
+app.post('/postUp', async(req,res,next) => {
+    const { title, content, user_id } =req.body;
+    await myDataSource.query(
+        `INSERT INTO posts(
+            title,
+            content,
+            user_id
+        ) VALUES (?, ?, ?);
+        `,
+        [title, content, user_id]
+    );
+    res.status(201).json({message : "postCreated"});
+});
  
 const start = async () => {
     try {
