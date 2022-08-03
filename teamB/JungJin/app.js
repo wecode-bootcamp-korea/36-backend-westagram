@@ -23,7 +23,7 @@ app.get('/ping', function(req, res){
     res.json({message: 'pong'})
 })
 
-app.listen(3000, function () {
-  console.log('server listening on port 3000')
+app.listen(process.env.PORT, function () {
+  console.log(`server listening on port ${process.env.PORT}`)
 })
 
