@@ -30,7 +30,6 @@ app.get('/ping', (req,res)=> {
     res.status(200).json({mesaage : 'pong'})
 });
 
-//모든 사용자 조회
 app.get('/users', async(req, res)=> {
     await myDataSource.query(
     `SELECT
@@ -44,7 +43,6 @@ app.get('/users', async(req, res)=> {
     });
 });
 
-//회원가입
 app.post('/users/signUp', async(req, res) => {
     const { name, email, profile_image, password } = req.body;
     await myDataSource.query(
