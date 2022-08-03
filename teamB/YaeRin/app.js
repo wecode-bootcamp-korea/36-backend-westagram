@@ -31,15 +31,15 @@ app.get("/ping", (req, res) => {
   res.status(200).json({ message: "pong" });
 });
 
-app.post("/users", async (req, res) => {
+app.post("/users/sign-up", async (req, res) => {
   const { name, age } = req.body;
   await myDataSource.query(
     `INSERT INTO users(
       name, 
       age
       ) VALUES (?, ?);
-      `, 
-      [ name, age ]
+      `,
+    [name, age]
   );
   res.status(201).json({ message: "New User Created!" });
 });
