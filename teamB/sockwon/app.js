@@ -92,6 +92,15 @@ app.delete("/post", async (req, res)=>{
         `, res.status(200).json({MESSAGE : "postingDeleted"})
     )
 })
+app.post('/likes', async (req, res)=>{
+    const {user_id, post_id} = req.body
+    await myDataSource.query(
+        `
+        INSERT INTO 
+        likes (user_id, post_id) VALUES (${user_id},${post_id});
+        `,res.status(201).json({MESSAGE : 'likeCreated'})
+    )
+})
 
 const server = http.createServer(app);
 
