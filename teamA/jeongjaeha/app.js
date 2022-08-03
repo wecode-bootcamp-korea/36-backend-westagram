@@ -56,17 +56,33 @@ app.post('/users', async (req, res) => {
 //Assignment 3: 게시글 등록하기
 
 app.post('/posts', async (req, res) => {
-  const { id, title, post } = req.body
+  const { no, title, post } = req.body
 
   await myDataSource.query(
     `INSERT INTO posts(
-      post_id,
+      users_no,
       post_title,
       post
     ) VALUES (?, ?, ?)
-    `, [ id, title, post ]
+    `, [ no, title, post ]
   )
       res.status(200).json({ message: 'postCreated'})
+})
+
+//Assignment 4: 전체 게시글 조회하기
+
+app.get('/posts/viewAll', async (req, res) => {
+  await myDataSource.manager.query(
+    `SELECT 
+      users_no,
+      post_title,
+      post
+       FROM posts`,
+    (err, rows) => {
+      res.status(200).json(rows)
+    }
+  ) 
+
 })
 
 //create  book

@@ -75,7 +75,7 @@ CREATE TABLE `posts` (
   `post_created_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `post_updated_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`no`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -97,14 +97,32 @@ CREATE TABLE `schema_migrations` (
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `users` (
-  `id` int NOT NULL AUTO_INCREMENT,
+  `no` int NOT NULL,
   `user_id` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
   `user_pw` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
   `user_name` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
   `user_age` int NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  PRIMARY KEY (`no`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `users_posts`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `users_posts` (
+  `no` int NOT NULL AUTO_INCREMENT,
+  `user_no` int NOT NULL,
+  `post_no` int NOT NULL,
+  PRIMARY KEY (`no`),
+  KEY `users_posts_post_no_fkey` (`post_no`),
+  KEY `users_posts_user_no_id_fkey` (`user_no`),
+  CONSTRAINT `users_posts_post_no_fkey` FOREIGN KEY (`post_no`) REFERENCES `posts` (`no`),
+  CONSTRAINT `users_posts_user_no_id_fkey` FOREIGN KEY (`user_no`) REFERENCES `users` (`no`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -132,5 +150,6 @@ INSERT INTO `schema_migrations` (version) VALUES
   ('20220802005742'),
   ('20220802010439'),
   ('20220802114625'),
-  ('20220803004946');
+  ('20220803004946'),
+  ('20220803040341');
 UNLOCK TABLES;
