@@ -17,7 +17,8 @@ const myDataSource = new DataSource({
     database: process.env.TYPEORM_DATABASE
 });
 
-myDataSource.initialize().then(() => {
+myDataSource.initialize()
+.then(() => {
     console.log("Data Source has been initialize");
 });
 
@@ -25,7 +26,7 @@ app = express();
 
 app.use(express.json());
 app.use(cors());
-app.use(morgan(""));
+app.use(morgan("dev"));
 
 // health check
 app.get("/ping", (reg, res) => {
@@ -33,7 +34,7 @@ app.get("/ping", (reg, res) => {
 });
 
 // 회원가입 엔드포인트
-app.post("/sign-up", async (req, res) => {
+app.post("/user/signup", async (req, res) => {
     const { name, email, password, profile_image } = req.body;
 
     await myDataSource.query(
