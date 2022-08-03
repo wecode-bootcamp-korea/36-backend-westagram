@@ -22,9 +22,10 @@ const myDataSource = new DataSource({
   database: process.env.TYPEORM_DATABASE
 })
 
-myDataSource.initialize().then(() =>
-                                  {console.log('Data Source has been initialized!')
-});
+myDataSource.initialize()
+            .then(() =>
+                {console.log('Data Source has been initialized!')}
+              );
 
 // health check
 app.get('/ping', function (req, res, next) {
@@ -61,6 +62,20 @@ app.post('/posts', async (req, res) => {
    res.status(202).json({message: 'postCreated'});
  });
 
+// GET posts
+app.get('/posts', async (req, res) => {
+  await myDataSource.manager.query(
+    `SELECT
+      po.post_id,
+      po.title,
+      po.content,
+      po.user_id,
+      po.created_at,
+      po.updated_at
+    FROM posts po`, (err, rows) => {
+      res.status(200).json(rows);
+    });
+});
 
 /*
 // Test requests
