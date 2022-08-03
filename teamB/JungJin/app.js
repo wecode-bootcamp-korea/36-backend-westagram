@@ -35,7 +35,7 @@ app.post('/users', function(req, res){
     res.status(201).json({message: "userCreated"});
 })
 
-app.listen(3000, function () {
-  console.log('server listening on port 3000')
+app.listen(process.env.PORT, function () {
+  console.log(`server listening on port ${process.env.PORT}`)
 })
 
