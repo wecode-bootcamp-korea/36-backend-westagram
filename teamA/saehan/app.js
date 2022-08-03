@@ -5,6 +5,7 @@ const morgan = require("morgan");
 const dotenv = require("dotenv");
 dotenv.config();
 
+
 const { DataSource } = require('typeorm');
 
 const myDataSource = new DataSource({
@@ -22,16 +23,28 @@ myDataSource.initialize()
     });
 const PORT = process.env.PORT;
 
-
 app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
 
-
 app.get('/ping', function (req, res) {
   res.status(200).json({message: 'pong'})
 })
- 
+
+app.post('/signup', async(req, res, next) => {
+   const  { name, email, password } = req.body;
+   await myDataSource.query(
+    `INSERT INTO users(
+        name,
+        email,
+        password
+    ) VALUES (?, ?, ?);
+    `,
+    [name, email, password]
+   );
+   res.status(201).json({ message : "userCreated"})
+});
+
 const start = async () => {
     try {
         app.listen(PORT, () => console.log(`Server is listening on ${PORT}`));
