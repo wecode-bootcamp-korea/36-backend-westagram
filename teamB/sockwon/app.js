@@ -7,8 +7,6 @@ dotenv.config() //환경변수의 조정. 아래에 있었다면 에러가 났�
 
 const {DataSource} = require('typeorm');
 
-
-
 const myDataSource = new DataSource({
     type: 'mysql',
     host: process.env.TYPEORM_HOST ,
