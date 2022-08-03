@@ -23,14 +23,27 @@ app.get('/ping', function(req, res){
 })
 
 app.get('/users', function(req, res){
-    const query = myDataSource.query(`SELECT * FROM users`, (err, rows) => {
+    const query = myDataSource.query(`SELECT 
+        id, 
+        name, 
+        email, 
+        profile_image, 
+        password, 
+        created_at, 
+        updated_at 
+        FROM users`, (err, rows) => {
         res.status(200).json({users : rows});
     })
 })
 
 app.post('/users', function(req, res){
     const {name, email, profile_image, password} = req.body
-    const sql = {name:name, email:email, profile_image:profile_image, password:password}
+    const sql = {
+        name:name, 
+        email:email, 
+        profile_image:profile_image, 
+        password:password
+    }
     const query = myDataSource.query(`INSERT INTO users set ?`, sql)
     res.status(201).json({message: "userCreated"});
 })
