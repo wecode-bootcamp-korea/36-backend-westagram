@@ -64,7 +64,7 @@ app.post('/posts', async (req, res) => {
 
 // GET posts
 app.get('/posts', async (req, res) => {
-  await myDataSource.manager.query(
+  await myDataSource.query(
     `SELECT
       po.post_id,
       po.title,
@@ -75,6 +75,27 @@ app.get('/posts', async (req, res) => {
     FROM posts po`, (err, rows) => {
       res.status(200).json(rows);
     });
+});
+
+// GET posts of specific user_id
+app.get('/posts/:user_id', async (req, res, next) => {
+  const userId = req.params['user_id'];
+
+  await myDataSource.query(
+    `SELECT
+      p.post_id,
+      p.title,
+      p.content,
+      p.created_at,
+      p.updated_at
+    FROM posts p
+    WHERE user_id=${userId}`, (err, rows) => {
+      let postings = JSON.parse(JSON.stringify(rows));
+      let data = new Object();
+      data['user_id'] = userId;
+      data['user_postings'] = postings;
+      res.status(200).send(data);
+  });
 });
 
 /*
