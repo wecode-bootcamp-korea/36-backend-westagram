@@ -44,6 +44,18 @@ app.post("/usersignup", async (req, res)=>{
     res.status(201).json({MEASSAGE : 'created_success!'});
 })
 
+app.post("/posts", async (req, res)=>{
+    const {title, content, user_id} = req.body;
+    await myDataSource.query(
+        `
+        INSERT INTO 
+        posts (title,content,user_id)
+        VALUES (?,?,?) 
+        `,[title,content,user_id]
+    );
+    res.status(201).json({MESSAGE : 'post_created!'})
+})
+
 const server = http.createServer(app);
 
 const start = async ()=>{
