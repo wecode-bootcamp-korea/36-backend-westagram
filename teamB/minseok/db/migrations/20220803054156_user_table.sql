@@ -1,5 +1,5 @@
 -- migrate:up
- CREATE TABLE teamA (
+ CREATE TABLE user_tables (
 	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	name VARCHAR(100) NOT NULL,
 	birth VARCHAR(50) NOT NULL,
