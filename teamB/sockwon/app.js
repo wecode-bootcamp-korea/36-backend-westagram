@@ -84,6 +84,14 @@ app.patch("/post", async (req, res)=>{
         );
         res.status(201).json({MESSAGE : 'success!'})
 })
+app.delete("/post", async (req, res)=>{
+    const {id} = req.body
+    await myDataSource.query(
+        `
+        DELETE FROM posts WHERE posts.id= ${id}
+        `, res.status(200).json({MESSAGE : "postingDeleted"})
+    )
+})
 
 const server = http.createServer(app);
 
