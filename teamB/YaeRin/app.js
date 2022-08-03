@@ -110,13 +110,13 @@ app.delete("/posts/:postId", async (req, res) => {
 });
 
 // LIKE
-app.post("/post", async (req, res) => {
+app.post("/post-like", async (req, res) => {
   const { userId, postId } = req.body;
   await myDataSource.query(
     `INSERT INTO likes(user_id, post_id) VALUES (?, ?);`,
     [userId, postId]
   );
-  res.status(201).json({ message: "Tap Like!" });
+  res.status(201).json({ message: "Like Button Tapped!" });
 });
 
 const server = http.createServer(app);
@@ -127,11 +127,10 @@ const serverListening = () =>
 
 server.listen(PORT, serverListening);
 
-// http -v GET http://127.0.0.1:8000/ping
 // http -v POST http://127.0.0.1:8000/posts title="test title" description="test desc"
 // http -v POST http://127.0.0.1:8000/users name="test user" age="20"
 // http -v GET http://127.0.0.1:8000/posts-with-users
 // http -v GET http://127.0.0.1:8000/posts
 // http -v PATCH http://127.0.0.1:8000/posts postId='1' title="My Neighborhood Totoro" description="Totoro is cute"
 // http -v DELETE http://127.0.0.1:8000/posts/6
-// http -v POST http://127.0.0.1:8000/post userId='1' postId='1'
+// http -v POST http://127.0.0.1:8000/post-like userId='1' postId='4'
