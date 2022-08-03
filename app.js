@@ -57,7 +57,8 @@ app.post('/posts', async (req, res) => {
      title,
      content,
      user_id
-   ) VALUES (?, ?, ?);`, [title, content, user_id]);
+   ) VALUES (?, ?, ?);`,
+   [title, content, user_id]);
 
    res.status(202).json({message: 'postCreated'});
  });
@@ -66,19 +67,14 @@ app.post('/posts', async (req, res) => {
 app.get('/posts', async (req, res) => {
   await myDataSource.query(
     `SELECT
-      po.post_id,
-      po.title,
-      po.content,
-      po.user_id,
-      po.created_at,
-      po.updated_at
-    FROM posts po`, (err, rows) => {
+      *
+    FROM posts`, (err, rows) => {
       res.status(200).json(rows);
     });
 });
 
 // GET posts of specific user_id
-app.get('/posts/:user_id', async (req, res, next) => {
+app.get('/posts/:user_id', async (req, res) => {
   const userId = req.params['user_id'];
 
   await myDataSource.query(
@@ -98,31 +94,52 @@ app.get('/posts/:user_id', async (req, res, next) => {
   });
 });
 
+
+// PUT new data to specific posts row after GET post
+//var updatePartOne = express.Router();
+app.put('/updatePosts', async (req, res) => {
+//  const postId = req.params['post_id'];
+//  const userId = req.params['user_id'];
+  const {title, content, postId, userId} = req.body;
+
+  await myDataSource.query(
+    `UPDATE posts
+        SET
+          title = ?,
+          content = ?,
+          user_id = ?
+        WHERE post_id = ?
+        AND user_id = ?`,
+        [title, content, userId, postId, userId]);
+
+  res.status(201).json({message: 'successfully updated'})
+});
 /*
-// Test requests
-app.get('/teamA', async (req, res) => {
+var updatePartTwo = express.Router();
+updatePartTwo.get('/updatePosts', async (req, res) => {
+  const postId = req.params['postId'];
+  const userId = req.params['userId'];
+  const new_userId = req.params['new_user_id']
+
   await myDataSource.query(
     `SELECT
-      u.id,
-      u.name,
-      u.MBTI
-     FROM users u`, (err, rows) => {
-       res.status(200).json(rows);
-     });
+      p.title,
+      p.content,
+      p.user_id,
+      p.post_id,
+      u.name
+    FROM posts p
+    INNER JOIN users u
+    ON p.user_id = ${new_userId}
+    AND p.post_id = ${postId}`, (err, rows) => {
+      res.status(204).json(rows);
+    });
 });
 
-app.post('/teamA', async (req, res) => {
-  const {name, mbti} = req.body;
-
-  await myDataSource.query(
-    `INSERT INTO teamA(
-      name,
-      mbti
-    ) VALUES (?, ?);`, [name, mbti]);
-
-  res.status(201).json({message: 'successfully created'})
-});
+app.use(updatePartOne, updatePartTwo);
 */
+
+// npm start
 const start = async () => {
   try {
     app.listen(port, () => {
