@@ -45,8 +45,8 @@ app.post('/users', async (req, res) => {
 		`,
 		[name, birth, contact, password]
 	); 
-     res.status(201).json({ message : "signUp suceess!" });
-	})
+    res.status(201).json({ message : "userCreated" });
+})
 
 const server = http.createServer(app)
 const PORT = process.env.PORT;
