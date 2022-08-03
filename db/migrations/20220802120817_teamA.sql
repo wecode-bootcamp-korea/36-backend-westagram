@@ -1,0 +1,9 @@
+-- migrate:up
+CREATE TABLE teamA (
+	id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	name VARCHAR(100) NOT NULL,
+	mbti VARCHAR(10) NOT NULL
+);
+
+-- migrate:down
+DROP TABLE teamA;
