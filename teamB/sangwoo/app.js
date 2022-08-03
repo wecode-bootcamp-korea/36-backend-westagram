@@ -34,7 +34,7 @@ app.get("/ping", (reg, res) => {
 });
 
 // 회원가입 엔드포인트
-app.post("/sign-up", async (req, res) => {
+app.post("/user/signup", async (req, res) => {
     const { name, email, password, profile_image } = req.body;
 
     await myDataSource.query(
