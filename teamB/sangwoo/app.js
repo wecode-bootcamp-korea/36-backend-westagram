@@ -125,31 +125,32 @@ app.get("/posts/:userId", async (req, res) => {
 
 // 게시글 수정하기
 app.patch("/posts/:userId/:postId", async(req, res) => {
-    const user = req.params.userId;
-    const post = req.params.postId;
-    const {postingTitle, postingContent} = req.body;
+    const {userId} = req.params;
+    const {postId} = req.params;
+    const {title, content} = req.body;
 
     await myDataSource.query(
-        `UPDATE 
-            posts,
-            (SELECT 
-                users.id AS userId,
-                users.name AS userName,
-                posts.id AS postingId,
-                posts.title AS postingTitle,
-                posts.content AS postingContent
-            FROM users
-            WHERE users.id = posts.user_id)
-        SET 
-            title AS postingTitle = ${postingTitle},
-            content AS postingContent = ${postingContent}
-        WHERE users.id = ${user} AND posts.id = ${post}
-        `,
-        
-        (err, rows)=>{
-            console.log(rows);
-            res.status(201).json({data : rows});
-        }
+        `UPDATE posts
+        SET
+            title = ?,
+            content = ?
+        WHERE posts.id = ${postId}
+        `, [title, content]
+    );
+        await myDataSource.manager.query(
+            `SELECT 
+                u.id AS userId,
+                u.name AS userName,
+                p.id AS postingId,
+                p.title AS postingTitle,
+                p.content AS postingContent
+            FROM users u
+            INNER JOIN posts p ON u.id = p.user_id
+            WHERE u.id = ${userId} AND p.id = ${postId}
+            `,
+            (err, rows)=>{
+                res.status(201).json({data : rows});
+            }
     );
 });
 
