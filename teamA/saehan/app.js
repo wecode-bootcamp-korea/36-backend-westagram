@@ -29,7 +29,7 @@ app.use(express.json());
 
 
 app.get('/ping', function (req, res) {
-  res.status(201).json({message: 'pong'})
+  res.status(200).json({message: 'pong'})
 })
  
 const start = async () => {
