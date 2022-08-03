@@ -17,15 +17,16 @@ const myDataSource = new DataSource({
     database: process.env.TYPEORM_DATABASE
 });
 
-myDataSource.initialize().then(() => {
-    console.log("Data Source has been initialize");
-});
+myDataSource.initialize()
+    .then(() => {
+        console.log("Data Source has been initialize");
+    });
 
 app = express();
 
 app.use(express.json());
 app.use(cors());
-app.use(morgan(""));
+app.use(morgan("dev"));
 
 // health check
 app.get("/ping", (reg, res) => {
@@ -33,7 +34,7 @@ app.get("/ping", (reg, res) => {
 });
 
 // 회원가입 엔드포인트
-app.post("/sign-up", async (req, res) => {
+app.post("/user/sign-up", async (req, res) => {
     const { name, email, password, profile_image } = req.body;
 
     await myDataSource.query(
@@ -49,6 +50,7 @@ app.post("/sign-up", async (req, res) => {
     );
     res.status(201).json({ message: "userCreated" });
 });
+
 // 게시글 등록 엔드포인트
 app.post("/posts", async (req, res) => {
     const { title, content, user_id } = req.body;
@@ -66,6 +68,7 @@ app.post("/posts", async (req, res) => {
     res.status(201).json({ message: "postCreated" });
 });
 
+// 전체 게시글 조회
 app.get("/posts", async (req, res) => {
     await myDataSource.manager.query(
         `SELECT 
@@ -80,6 +83,42 @@ app.get("/posts", async (req, res) => {
         `,
         (err, rows) => {
             res.status(200).json({ data: rows });
+        }
+    );
+});
+
+// 유저의 게시글 조회
+app.get("/posts/:userId", async (req, res) => {
+    const { userId } = req.params;
+
+    await myDataSource.manager.query(
+        `SELECT
+            u.id AS userId,
+            u.name AS userName,
+            u.profile_Image AS userProfileImage,
+            p.id AS postingId,
+            p.title AS postingTitle,
+            p.content AS postingContent
+        FROM users u
+        INNER JOIN posts p ON u.id = p.user_id
+        WHERE u.id = ${userId}
+        `,
+        (err, rows) => {
+            let postings = [];
+            let data = {
+                userId : rows[0].userId,
+                userName: rows[0].userName,
+                userProfileImage : rows[0].userProfileImage,
+                postings
+            }
+            for(let i in rows){
+                postings.push({
+                    postingId: rows[i].postingId,
+                    postingTitle: rows[i].postingTitle,
+                    postingContent: rows[i].postingContent
+                })
+            }
+            res.status(200).json({ data: data });
         }
     );
 });
