@@ -29,21 +29,6 @@ app.get("/ping", (req, res)=> {
     res.status(200).json({ "message" :"pong"});
 });
 
-//create a book
-app.post('/books', async (req, res) => {
-	const { title, description, coverImage} = req.body
-    
-	await myDataSource.query(
-		`INSERT INTO books(
-			title,
-			description,
-			cover_image
-		) VALUES (?, ?, ?);
-		`,
-		[ title, description, coverImage ]
-	); 
-     res.status(201).json({ message : "successfully created" });
-	})
 
 const server = http.createServer(app)
 const PORT = process.env.PORT;
