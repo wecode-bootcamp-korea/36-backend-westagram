@@ -8,7 +8,7 @@ const morgan = require("morgan");
 const dotenv = require("dotenv");
 dotenv.config()
 
-const { DataSource } = require('typeorm');
+const { DataSource, SimpleConsoleLogger } = require('typeorm');
 const { title } = require("process");
 
 const myDataSource = new DataSource({
@@ -89,14 +89,36 @@ app.get('/posts/viewAll', async (req, res) => {
 //Assignment 5: 유저의 게시글 조회하기
 
 app.get('/posts/:id', async (req, res) => {
-  const { user_no } = req.body;
+  const { id } = req.params;
+
   await myDataSource.query(
     `SELECT
-      users.no,
-      
-    `
-  )
-})
+      users.user_id AS name,
+      posts.no AS no,
+      post_title AS posting FROM posts
+      INNER JOIN users
+      ON users.no = posts.users_no WHERE users.no = ${id}
+
+    `, (err, rows) => {
+
+      posting = [];
+
+      data = {
+        userName : rows[0].name,
+        userId : `${id}`,
+        posting
+      }
+
+      for(let i in rows) {
+        posting.push({
+          no : rows[i].no,
+          posting : rows[i].posting
+        }) 
+      }
+
+      res.status(200).json( data );
+    })
+});
 
 //create  book
 app.post("/books", async (req, res, next) => {
