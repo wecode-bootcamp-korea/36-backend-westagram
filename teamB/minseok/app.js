@@ -49,19 +49,21 @@ app.post('/users', async (req, res) => {
 })
 
 app.post('/posts', async (req, res) => {
-	const {title, content} = req.body;
+	const {title, content, user_id, userProfileImage, postingImageUrl} = req.body;
     
 	await myDataSource.query(
 		`INSERT INTO posts(
 			title,
-			content
-		) VALUES (?, ?);
+			content,
+            user_id,
+            userProfileImage,
+            postingImageUrl
+		) VALUES (?, ?, ?, ? ,?);
 		`,
-		[title, content]
+		[title, content, user_id, userProfileImage, postingImageUrl]
 	); 
     res.status(201).json({ message : "postCreated" });
 });
-
 
 const server = http.createServer(app)
 const PORT = process.env.PORT;
