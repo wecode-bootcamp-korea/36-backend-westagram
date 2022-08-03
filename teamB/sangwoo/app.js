@@ -17,7 +17,8 @@ const myDataSource = new DataSource({
     database: process.env.TYPEORM_DATABASE
 });
 
-myDataSource.initialize().then(() => {
+myDataSource.initialize()
+.then(() => {
     console.log("Data Source has been initialize");
 });
 
@@ -25,7 +26,7 @@ app = express();
 
 app.use(express.json());
 app.use(cors());
-app.use(morgan(""));
+app.use(morgan("dev"));
 
 app.get("/ping", (reg, res) => {
     res.json({ message: "pong" });
