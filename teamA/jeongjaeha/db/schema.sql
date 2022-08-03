@@ -62,6 +62,23 @@ CREATE TABLE `books_authors` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `posts`
+--
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `posts` (
+  `no` int NOT NULL AUTO_INCREMENT,
+  `post_id` varchar(200) COLLATE utf8mb4_general_ci NOT NULL,
+  `post_title` varchar(300) COLLATE utf8mb4_general_ci NOT NULL,
+  `post` varchar(2000) COLLATE utf8mb4_general_ci NOT NULL,
+  `post_created_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `post_updated_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`no`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `schema_migrations`
 --
 
@@ -87,7 +104,7 @@ CREATE TABLE `users` (
   `user_age` int NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -114,5 +131,6 @@ INSERT INTO `schema_migrations` (version) VALUES
   ('20220802005712'),
   ('20220802005742'),
   ('20220802010439'),
-  ('20220802114625');
+  ('20220802114625'),
+  ('20220803004946');
 UNLOCK TABLES;
