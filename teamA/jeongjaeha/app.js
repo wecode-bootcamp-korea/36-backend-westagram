@@ -85,6 +85,19 @@ app.get('/posts/viewAll', async (req, res) => {
 
 })
 
+
+//Assignment 5: 유저의 게시글 조회하기
+
+app.get('/posts/:id', async (req, res) => {
+  const { user_no } = req.body;
+  await myDataSource.query(
+    `SELECT
+      users.no,
+      
+    `
+  )
+})
+
 //create  book
 app.post("/books", async (req, res, next) => {
   const { title, description, coverImage } = req.body
