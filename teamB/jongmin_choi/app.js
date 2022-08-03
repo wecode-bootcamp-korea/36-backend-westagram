@@ -31,13 +31,10 @@ myDataSource.initialize()
     myDataSource.destroy();
 })
 
-// health check
 app.get("/ping", (req, res) => {
     res.status(200).json({"message" : "pong"});
 });
 
-// 유저 회원가입
-// http -v POST 127.0.0.1:3000/users name="Sunny" email="sunny123@gmail.com" profileImage="user profile image 3"
 app.post('/users', async (req, res, next) => {
     const { name, email, profileImage } = req.body;
 
@@ -52,12 +49,6 @@ app.post('/users', async (req, res, next) => {
 
         res.status(201).json({ message : "userCreated"});
 });
-
-
-
-
-
-
 
 const start = async () => {
     try {
