@@ -16,8 +16,9 @@ const myDataSource = new DataSource({
   database: process.env.TYPEORM_DATABASE,
 });
 
-myDataSource.initialize().then(() => {
-  console.log("Data Source has been initialized!");
+myDataSource.initialize()
+  .then(() => {
+    console.log("Data Source has been initialized!");
 });
 
 const app = express();
@@ -30,13 +31,16 @@ app.get("/ping", (req, res) => {
   res.status(200).json({ message: "pong" });
 });
 
-// POST user
 app.post("/users", async (req, res) => {
   const { name, age } = req.body;
-  await myDataSource.query(`INSERT INTO users(name, age) VALUES (?, ?);`, [
-    name,
-    age,
-  ]);
+  await myDataSource.query(
+    `INSERT INTO users(
+      name, 
+      age
+      ) VALUES (?, ?);
+      `, 
+      [ name, age ]
+  );
   res.status(201).json({ message: "New User Created!" });
 });
 
@@ -47,7 +51,3 @@ const serverListening = () =>
   console.log(`💫 Server listening on port http://localhost:${PORT} ⛱`);
 
 server.listen(PORT, serverListening);
-
-// http -v GET http://127.0.0.1:8000/ping
-// http -v POST http://127.0.0.1:8000/posts title="test title" description="test desc"
-// http -v POST http://127.0.0.1:8000/users name="test user" age="20"
