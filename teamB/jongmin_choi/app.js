@@ -31,28 +31,23 @@ myDataSource.initialize()
     myDataSource.destroy();
 })
 
-// health check
-// http -v GET 127.0.0.1:3000/ping
 app.get("/ping", (req, res) => {
     res.status(200).json({"message" : "pong"});
 });
 
-// database connection check
-// http -v POST 127.0.0.1:3000/ping id:=1 name="test name" email="test@email"
-app.post("/ping", async(req, res, next) => {
-    const { id, name, email } = req.body;
+app.post('/users', async (req, res, next) => {
+    const { name, email, profileImage } = req.body;
 
     await myDataSource.query(
-        `INSERT INTO test_table(
-            id,
+        `INSERT INTO users(
             name,
-            email
+            email,
+            profile_image
         ) VALUES (?, ?, ?);
         `,
-        [id, name, email]
-    );
+        [name, email, profileImage]);
 
-    res.status(201).json({ message : "successfully created!"});
+        res.status(201).json({ message : "userCreated"});
 });
 
 const start = async () => {
