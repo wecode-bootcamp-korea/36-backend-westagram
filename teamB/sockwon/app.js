@@ -56,6 +56,15 @@ app.post("/posts", async (req, res)=>{
     res.status(201).json({MESSAGE : 'post_created!'})
 })
 
+app.get('/posts', async (req,res)=>{
+    await myDataSource.query(
+        `
+        SELECT posts.user_id AS userId,users.profile_image AS userProfileImage,posts.id AS postingId,posts.content AS postingContent
+        FROM users INNER JOIN posts ON posts.user_id = users.id;
+        `,(err,rows)=>res.status(200).json({MESSAGE : 'success!', data: rows})
+    ); 
+})
+
 const server = http.createServer(app);
 
 const start = async ()=>{
