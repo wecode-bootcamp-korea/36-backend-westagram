@@ -44,7 +44,13 @@ app.post('/users', function(req, res){
         profile_image:profile_image, 
         password:password
     }
-    const query = myDataSource.query(`INSERT INTO users set ?`, sql)
+    const query = myDataSource.query(`INSERT INTO users(
+        name, 
+        email, 
+        profile_image, 
+        password
+        ) VALUES (?, ?, ?, ?)`, 
+        [name, email, profile_image, password])
     res.status(201).json({message: "userCreated"});
 })
 
