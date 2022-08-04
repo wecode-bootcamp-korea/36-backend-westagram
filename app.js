@@ -22,20 +22,22 @@ const myDataSource = new DataSource({
   database: process.env.TYPEORM_DATABASE
 })
 
-myDataSource.initialize().then(() =>
-                                  {console.log('Data Source has been initialized!')
-});
+myDataSource.initialize()
+            .then(() =>
+                {console.log('Data Source has been initialized!')}
+              );
 
 // health check
 app.get('/ping', function (req, res, next) {
   res.json({message: 'pong'});
 });
 
-app.post('/postman', async (req, res) => {
-const {name, gender, birth, contact, mbti} = req.body;
+// POST users
+app.post('/users', async (req, res) => {
+  const {name, gender, birth, contact, mbti} = req.body;
 
   await myDataSource.query(
-    `INSERT INTO teamA(
+    `INSERT INTO users(
       name,
       gender,
       birth,
@@ -44,33 +46,8 @@ const {name, gender, birth, contact, mbti} = req.body;
     ) VALUES (?, ?, ?, ?, ?);`, [name, gender, birth, contact, mbti]);
 
     res.status(201).json({message: 'userCreated'});
-});
+  });
 
-/*
-// Test requests
-app.get('/teamA', async (req, res) => {
-  await myDataSource.query(
-    `SELECT
-      a.id,
-      a.name,
-      a.MBTI
-     FROM teamA a`, (err, rows) => {
-       res.status(200).json(rows);
-     });
-});
-
-app.post('/teamA', async (req, res) => {
-  const {name, mbti} = req.body;
-
-  await myDataSource.query(
-    `INSERT INTO teamA(
-      name,
-      mbti
-    ) VALUES (?, ?);`, [name, mbti]);
-
-  res.status(201).json({message: 'successfully created'})
-});
-*/
 const start = async () => {
   try {
     app.listen(port, () => {
