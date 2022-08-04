@@ -56,8 +56,9 @@ app.post('/posts', async (req, res) => {
    `INSERT INTO posts(
      title,
      content,
-     user_id
-   ) VALUES (?, ?, ?);`,
+     user_id,
+     like_count
+   ) VALUES (?, ?, ?, 0);`,
    [title, content, user_id]);
 
    res.status(202).json({message: 'postCreated'});
@@ -138,6 +139,20 @@ app.delete('/posts/:postId', async (req,res,next) => {
   );
 
   res.status(202).json({message: "postingDeleted"});
+});
+
+// PUT like_count
+app.put('/like/:postId', async (req, res) => {
+  const {postId} = req.params;
+
+  await myDataSource.query(
+    `UPDATE posts
+      SET
+        like_count = like_count + 1
+      WHERE posts.post_id = ${postId}`
+    );
+
+  res.status(202).json({message: 'likeCreated'})
 });
 
 // npm start
