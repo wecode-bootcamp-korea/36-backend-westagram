@@ -85,7 +85,7 @@ app.post('/posts', function(req, res){
 })
 
 app.get('/data', function(req, res){
-    myDataSource.query(`
+    database.query(`
     select 
         users.id as userId, 
         profile_image as userProfileImage, 
