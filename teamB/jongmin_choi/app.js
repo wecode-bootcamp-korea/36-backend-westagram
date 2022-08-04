@@ -82,6 +82,77 @@ app.get('/posts', async(req, res, next) => {
         });
 });
 
+app.get('/users/post/:userId', async (req, res) => {
+    const { userId } = req.params;
+    await myDataSource.manager.query(
+        `SELECT
+                posts.id AS postingId,
+                posts.post_image AS postingImageUrl,
+                posts.content AS postingContent
+            FROM posts
+            WHERE posts.user_id = ${userId}
+        `,(err, data) => {
+            const posts = {
+                userId : userId,
+                posting : data
+            }
+            res.status(200).json({data : posts})
+        });
+
+});
+
+app.patch('/users/:postId', async(req, res, next) => {
+    const { title, content, postImage} = req.body;
+    const {postId}  = req.params;
+
+    await myDataSource.query(
+        `UPDATE posts
+        SET
+            title = ?,
+            content = ?,
+            post_image = ?
+        WHERE posts.id = ${postId};
+        `,[title, content, postImage]
+    );
+
+    await myDataSource.manager.query(
+        `SELECT
+                posts.user_id AS userId,
+                users.name AS userName,
+                posts.id AS postingId,
+                posts.title AS postingTitle,
+                posts.content AS postingContent
+            FROM posts
+            INNER JOIN users ON (posts.user_id = users.id
+                AND posts.id = ${postId})`
+        ,(err, data) => {
+            res.status(200).json({data});
+        });
+});
+
+app.delete('/posts/:postId', async (req, res, next) => {
+    const {postId} = req.params;
+
+    await myDataSource.query(
+        `DELETE FROM posts
+        WHERE posts.id = ${postId}
+        `);
+
+    res.status(200).json({ message : "postingDeleted" });
+});
+
+app.post('/posts/likes', async (req, res, next) => {
+    const { postId, userId } = req.body;
+
+    await myDataSource.query(
+        `INSERT INTO likes(
+            post_id,
+            user_id
+        ) VALUES (?, ?);
+        `, [postId, userId]);
+
+    res.status(201).json({ message : "likeCreated"});
+});
 
 
 const start = async () => {
