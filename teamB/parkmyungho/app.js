@@ -32,6 +32,24 @@ app.get("/ping", (req, res)=>{
     res.json({message: "pong"})
 })
 
+//Assingment2 - 유저 회원가입하기
+app.post('/signup', async(req,res,next)=>{
+    const {name, email, profileImage, password} = req.body
+
+    await myDataSource.query(
+        `INSERT INTO users(
+            name,
+            email,
+            profile_image,
+            password
+        ) VALUES (?,?,?,?);
+        `,
+        [name, email, profileImage, password]
+    )
+    res.status(201).json({message:"userCreated"})
+})
+
+
 const server = http.createServer(app)
 const PORT = process.env.PORT;
 
