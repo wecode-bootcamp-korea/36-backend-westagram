@@ -33,15 +33,17 @@ app.get("/ping", (req, res) => {
 
 app.post("/users/sign-up", async (req, res) => {
   const { name, age } = req.body;
+
   await myDataSource.query(
     `INSERT INTO users(
       name, 
       age
-      ) VALUES (?, ?);
-      `,
+      ) VALUES (?, ?)`,
     [name, age]
   );
+
   res.status(201).json({ message: "New User Created!" });
+
 });
 
 const server = http.createServer(app);
