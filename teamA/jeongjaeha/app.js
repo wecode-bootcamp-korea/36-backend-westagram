@@ -128,10 +128,22 @@ app.patch('/patch', async(req, res) => {
       p.title,
       p.post
       FROM posts p
-      WHERE p.no='1'`,
+      WHERE p.no=${users_no}`,
       (err, rows) => {
         res.status(200).json( {data :rows} )
       })
+});
+
+
+app.delete('/postDelete/:no', async(req, res) => {
+  const { no } = req.params;
+  
+  await myDataSource.query(
+    `DELETE FROM posts
+    WHERE posts.no = ${no}
+    `
+  )
+  res.status(204).json({ message: 'postingDeleted' })
 });
 
 
