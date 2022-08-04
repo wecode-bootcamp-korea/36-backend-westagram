@@ -27,13 +27,19 @@ app = express();
 app.use(express.json());
 app.use(cors());
 app.use(morgan("dev"));
+<<<<<<< HEAD
 
+=======
+>>>>>>> main
 
 app.get("/ping", (reg, res) => {
     res.status(201).json({ message: "pong" });
 });
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> main
 app.post("/user/signup", async (req, res) => {
     const { name, email, password, profile_image } = req.body;
 
