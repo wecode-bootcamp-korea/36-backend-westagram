@@ -16,8 +16,9 @@ const myDataSource = new DataSource({
   database: process.env.TYPEORM_DATABASE,
 });
 
-myDataSource.initialize().then(() => {
-  console.log("Data Source has been initialized!");
+myDataSource.initialize()
+  .then(() => {
+    console.log("Data Source has been initialized!");
 });
 
 const app = express();
@@ -30,14 +31,33 @@ app.get("/ping", (req, res) => {
   res.status(200).json({ message: "pong" });
 });
 
-// POST user
-app.post("/users", async (req, res) => {
+app.post("/users/sign-up", async (req, res) => {
   const { name, age } = req.body;
-  await myDataSource.query(`INSERT INTO users(name, age) VALUES (?, ?);`, [
-    name,
-    age,
-  ]);
+
+  await myDataSource.query(`
+    INSERT INTO users (
+      name, 
+      age
+    ) VALUES (?, ?)`,
+    [name, age]
+  );
+
   res.status(201).json({ message: "New User Created!" });
+
+});
+
+app.post("/posts", async (req, res, next) => {
+  const { title, description } = req.body;
+
+  await myDataSource.query(`
+    INSERT INTO posts (
+      title, 
+      description
+    ) VALUES (?, ?);`,
+    [title, description]
+  );
+
+  res.status(201).json({ message: "New Post Created!" });
 });
 
 // POST post
@@ -59,11 +79,3 @@ const serverListening = () =>
   console.log(`💫 Server listening on port http://localhost:${PORT} ⛱`);
 
 server.listen(PORT, serverListening);
-
-// http -v GET http://127.0.0.1:8000/ping
-// http -v POST http://127.0.0.1:8000/posts title="test title" description="test desc"
-// http -v POST http://127.0.0.1:8000/users name="test user" age="20"
-// http -v GET http://127.0.0.1:8000/posts-with-users
-// http -v GET http://127.0.0.1:8000/posts
-// http -v PATCH http://127.0.0.1:8000/posts postId='1' title="My Neighborhood Totoro" description="Totoro is cute"
-// http -v DELETE http://127.0.0.1:8000/posts postId='3'
