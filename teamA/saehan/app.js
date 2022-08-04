@@ -5,7 +5,6 @@ const morgan = require("morgan");
 const dotenv = require("dotenv");
 dotenv.config();
 
-
 const { DataSource } = require('typeorm');
 
 const myDataSource = new DataSource({
