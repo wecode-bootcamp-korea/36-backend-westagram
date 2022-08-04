@@ -64,8 +64,11 @@ app.post("/posts", async (req, res, next) => {
 app.post("/posts", async (req, res, next) => {
   const { title, description } = req.body;
 
-  await myDataSource.query(
-    `INSERT INTO posts(title, description) VALUES (?, ?);`,
+  await myDataSource.query(`
+    INSERT INTO posts (
+      title, 
+      description
+    ) VALUES (?, ?);`,
     [title, description]
   );
 
