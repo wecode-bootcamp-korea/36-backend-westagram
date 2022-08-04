@@ -38,12 +38,6 @@ app.get('/users', function(req, res){
 
 app.post('/users', function(req, res){
     const {name, email, profile_image, password} = req.body
-    const sql = {
-        name:name, 
-        email:email, 
-        profile_image:profile_image, 
-        password:password
-    }
     const query = myDataSource.query(`INSERT INTO users(
         name, 
         email, 
