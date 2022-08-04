@@ -67,6 +67,21 @@ app.post('/posts', async(req, res, next) => {
     res.status(201).json({ message : "postCreated"});
 });
 
+app.get('/posts', async(req, res, next) => {
+    await myDataSource.manager.query(
+        `SELECT
+                posts.user_id AS userId,
+                users.profile_image AS userProfileImage,
+                posts.id AS postingId,
+                posts.post_image AS postingImageUrl,
+                posts.content AS postingContent
+            FROM posts
+            INNER JOIN users ON posts.user_id = users.id`
+        ,(err, data) => {
+            res.status(200).json({data});
+        });
+});
+
 
 
 const start = async () => {
