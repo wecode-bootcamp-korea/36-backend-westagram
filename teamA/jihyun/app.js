@@ -51,34 +51,6 @@ app.post("/signup", async (req, res, next) => {
   res.status(201).json({ message: "userCreated" });
 });
 
-//posts
-app.post("/posts", async (req, res, next) => {
-  const { title, content } = req.body;
-
-  await myDataSource.query(
-    `INSERT INTO posts(
-      title, content
-    ) VALUES (?, ?);`,
-    [title, content]
-  );
-  res.status(201).json({ message: "postCreated" });
-});
-
-//posts list
-app.get("/posts/list", async (req, res, next) => {
-  await myDataSource.query(
-    `SELECT u.id as "userId", u.name as "userName", p.id as "postingId", p.title as "postingTitle", p.content as "postingContent" FROM users u inner join posts_users pu on u.id = pu.user_id inner join
-    posts p on pu.post_id = p.id order by u.id;`,
-    (error, rows) => {
-      res.status(200).json({ "data" : rows });
-    }
-  );
-});
-
-//posts list for each
-
-
-
 const server = http.createServer(app);
 const PORT = process.env.PORT;
 
