@@ -1,5 +1,5 @@
 {
-  "name": "westagram",
+  "name": "parkmyungho",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
@@ -18,8 +18,5 @@
     "morgan": "^1.10.0",
     "mysql2": "^2.3.3",
     "typeorm": "^0.3.7"
-  },
-  "devDependencies": {
-    "nodemon": "^2.0.19"
   }
 }
