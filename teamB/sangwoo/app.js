@@ -151,9 +151,11 @@ app.patch("/posts/:userId/:postId", async(req, res) => {
             (err, rows)=>{
                 res.status(201).json({data : rows});
             }
+            
     );
 });
 
+// 게시글 삭제하기
 app.delete("/posts/:postId", async (req, res) => {
     const { postId } = req.params;
 
@@ -164,6 +166,22 @@ app.delete("/posts/:postId", async (req, res) => {
     res.status(200).json({ message: "postingDeleted" });
 });
 
+// 게시글 좋아요 누르기 
+app.post('/posts/like/:postId', async(req, res) => {
+    const {postId} = req.params;
+    const {user_id} = req.body;
+
+    await myDataSource.query(
+        `
+        INSERT INTO likes(
+            user_id,
+            post_id
+        ) VALUES(?, ${postId})
+        `,
+        [user_id]
+    ) 
+    res.status(200).json({ message: "likeCreated" });
+})
 
 const server = http.createServer(app);
 const PORT = process.env.PORT;
