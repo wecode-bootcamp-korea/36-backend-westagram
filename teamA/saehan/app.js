@@ -46,6 +46,27 @@ app.get('/viewAllPosts', async(req,res,next) => {
     );
 });
 
+app.get('/viewSomeonePost/:userId', async(req,res,next) => {
+    const { userId } = req.params;
+        await myDataSource.query(
+            `SELECT
+                    p.id as postingId,
+                    p.title,
+                    p.content,
+                    p.user_id
+            FROM posts p,users u
+            WHERE p.user_id = ${userId}
+            `, (err, rows) => {
+                console.log(rows);
+                let obj = {
+                    Id : parseInt(userId)
+                };
+                obj["postings"]=rows;
+                res.status(200).json({"data": obj})
+            }
+        );
+});
+
 app.post('/signup', async(req, res, next) => {
    const  { name, email, password } = req.body;
    await myDataSource.query(
@@ -60,7 +81,7 @@ app.post('/signup', async(req, res, next) => {
    res.status(201).json({ message : "userCreated"})
 });
 
-app.post('/postUp', async(req,res,next) => {
+app.post('/posts', async(req,res,next) => {
     const { title, content, user_id } =req.body;
     await myDataSource.query(
         `INSERT INTO posts(
