@@ -45,7 +45,7 @@ app.get('/users', async(req, res)=> {
     });
 });
 
-app.post('/users/signUp', async(req, res) => {
+app.post('/users/sign-up', async(req, res) => {
     const { name, email, profile_image, password } = req.body;
     await myDataSource.query(
         `INSERT INTO users (
