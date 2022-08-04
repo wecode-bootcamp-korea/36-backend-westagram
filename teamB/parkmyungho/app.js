@@ -6,10 +6,16 @@ const morgan = require("morgan");
 const dotenv = require("dotenv");
 dotenv.config(); 
 
+<<<<<<< HEAD
 const {DataSource} = require('typeorm');
 const { ppid } = require("process");
 
 const appDataSource = new DataSource({
+=======
+const {DataSource} = require('typeorm')
+
+const myDataSource = new DataSource({
+>>>>>>> d789608b13c4c448c4fc34c578078de59fc784fe
     type: process.env.TYPEORM_CONNECTION,
     host: process.env.TYPEORM_HOST,
     port: process.env.TYPEORM_PORT,
@@ -18,7 +24,11 @@ const appDataSource = new DataSource({
     database: process.env.TYPEORM_DATABASE
 })
 
+<<<<<<< HEAD
 appDataSource.initialize()
+=======
+myDataSource.initialize()
+>>>>>>> d789608b13c4c448c4fc34c578078de59fc784fe
     .then(()=>{
         console.log("Data Source has been initialized!")
     });
@@ -33,6 +43,7 @@ app.get("/ping", (req, res)=>{
     res.json({message: "pong"})
 })
 
+<<<<<<< HEAD
 //Assingment2 - 회원가입 엔드포인트
 app.post('/user/signup', async(req,res)=>{
     const {name, email, profileImage, password} = req.body
@@ -150,6 +161,8 @@ app.put('/postFix/:userId-:postId', async(req,res) =>{
     );
 })
 
+=======
+>>>>>>> d789608b13c4c448c4fc34c578078de59fc784fe
 const server = http.createServer(app)
 const PORT = process.env.PORT;
 
