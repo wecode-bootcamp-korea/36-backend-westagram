@@ -23,32 +23,56 @@ app.get('/ping', function(req, res){
 })
 
 app.get('/users', function(req, res){
-    const query = myDataSource.query(`SELECT * FROM users`, (err, rows) => {
+    const query = myDataSource.query(`SELECT 
+        id, 
+        name, 
+        email, 
+        profile_image, 
+        password, 
+        created_at, 
+        updated_at 
+        FROM users`, (err, rows) => {
         res.status(200).json({users : rows});
     })
 })
 
 app.post('/users', function(req, res){
     const {name, email, profile_image, password} = req.body
-    const sql = {name:name, email:email, profile_image:profile_image, password:password}
-    const query = myDataSource.query(`INSERT INTO users set ?`, sql)
+    const query = myDataSource.query(`INSERT INTO users(
+        name, 
+        email, 
+        profile_image, 
+        password
+        ) VALUES (?, ?, ?, ?)`, 
+        [name, email, profile_image, password])
     res.status(201).json({message: "userCreated"});
 })
 
 app.get('/posts', function(req, res){
-    const query = myDataSource.query(`SELECT * FROM posts`, (err, rows) => {
+    const query = myDataSource.query(`SELECT 
+    id,
+    title,
+    content,
+    imageurl,
+    user_id,
+    created_at,
+    updated_at 
+    FROM posts`, (err, rows) => {
         res.status(200).json({posts : rows});
     })
 })
 
 app.post('/posts', function(req, res){
     const {title, content, user_id} = req.body
-    const sql = {title:title, content:content, user_id:user_id}
-    const query = myDataSource.query(`INSERT INTO posts set ?`, sql)
+    const query = myDataSource.query(`INSERT INTO posts(
+    title,
+    content,
+    user_id    
+    ) VALUES (?, ?, ?)`, [title, content, user_id])
     res.status(201).json({message: "postCreated"});
 })
 
-app.listen(3000, function () {
-  console.log('server listening on port 3000')
+app.listen(process.env.PORT, function () {
+  console.log(`server listening on port ${process.env.PORT}`)
 })
 
