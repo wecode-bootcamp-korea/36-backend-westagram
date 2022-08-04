@@ -6,7 +6,8 @@ const morgan = require("morgan");
 const dotenv = require("dotenv");
 dotenv.config(); 
 
-const {DataSource} = require('typeorm')
+const {DataSource} = require('typeorm');
+const { ppid } = require("process");
 
 const myDataSource = new DataSource({
     type: process.env.TYPEORM_CONNECTION,
@@ -32,8 +33,8 @@ app.get("/ping", (req, res)=>{
     res.json({message: "pong"})
 })
 
-//Assingment2 - 유저 회원가입하기
-app.post('/signup', async(req,res,next)=>{
+//Assingment2 - 회원가입 엔드포인트
+app.post('/user/signup', async(req,res,next)=>{
     const {name, email, profileImage, password} = req.body
 
     await myDataSource.query(
@@ -48,7 +49,6 @@ app.post('/signup', async(req,res,next)=>{
     )
     res.status(201).json({message:"userCreated"})
 })
-
 
 const server = http.createServer(app)
 const PORT = process.env.PORT;
