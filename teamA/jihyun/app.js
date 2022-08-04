@@ -44,8 +44,10 @@ app.post("/signup", async (req, res, next) => {
 
   await myDataSource.query(
     `INSERT INTO users(
-      name, email, password
-    ) VALUES (?, ?, ?);`,
+      name, 
+      email, 
+      password
+    ) VALUES (?, ?, ?)`,
     [name, email, password]
   );
   res.status(201).json({ message: "userCreated" });
