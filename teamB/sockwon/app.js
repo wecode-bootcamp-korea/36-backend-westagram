@@ -1,3 +1,4 @@
+const dotenv = require("dotenv");
 dotenv.config() //환경변수의 조정. 아래에 있었다면 에러가 났을 것이다. 위치에 신경써야.
 
 const http = require("http");
@@ -5,7 +6,7 @@ const http = require("http");
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
-const dotenv = require("dotenv");
+
 const {DataSource} = require('typeorm');
 
 const appDataSource = new DataSource({
