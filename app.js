@@ -94,12 +94,8 @@ app.get('/posts/:user_id', async (req, res) => {
   });
 });
 
-// ****************************************************************
 // PUT new data to specific posts row after GET post
-//var updatePartOne = express.Router();
-app.put('/updatePosts', async (req, res, next) => {
-//  const postId = req.params['post_id'];
-//  const userId = req.params['user_id'];
+app.put('/posts', async (req, res, next) => {
   const {title, content, postId, userId} = req.body;
 
   await myDataSource.query(
@@ -132,23 +128,18 @@ app.put('/updatePosts', async (req, res, next) => {
    });
 });
 
-/*
-app.use('/updatePosts/next', async (req, res, next) => {
- const postId = req.params['post_id'];
- const userId = req.params['user_id'];
+// DELETE post
+app.delete('/posts/:postId', async (req,res,next) => {
+  const {postId} = req.params;
 
- await myDataSource.query(
-   `SELECT
-     p.title,
-     p.content,
-     p.user_id,
-     p.post_id
-    FROM posts p`
-   , (err, rows) => {
-     res.status(204).json(rows);
-   });
+  await myDataSource.query(
+    `DELETE FROM posts
+    WHERE posts.post_id=${postId}`
+  );
+
+  res.status(202).json({message: "postingDeleted"});
 });
-*/
+
 // npm start
 const start = async () => {
   try {
