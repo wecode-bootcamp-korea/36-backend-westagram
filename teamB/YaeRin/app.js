@@ -34,16 +34,30 @@ app.get("/ping", (req, res) => {
 app.post("/users/sign-up", async (req, res) => {
   const { name, age } = req.body;
 
-  await myDataSource.query(
-    `INSERT INTO users(
+  await myDataSource.query(`
+    INSERT INTO users (
       name, 
       age
-      ) VALUES (?, ?)`,
+    ) VALUES (?, ?)`,
     [name, age]
   );
 
   res.status(201).json({ message: "New User Created!" });
 
+});
+
+app.post("/posts", async (req, res, next) => {
+  const { title, description } = req.body;
+
+  await myDataSource.query(`
+    INSERT INTO posts (
+      title, 
+      description
+    ) VALUES (?, ?);`,
+    [title, description]
+  );
+
+  res.status(201).json({ message: "New Post Created!" });
 });
 
 const server = http.createServer(app);
