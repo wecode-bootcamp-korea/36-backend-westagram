@@ -66,22 +66,26 @@ app.post('/users/sign-up', async(req, res) => {
 
 app.post('/post', async(req, res) => {
     const { title, content, user_id } = req.body;
+    const userCheck = await dataSource.query(`
+    SELECT
+        count(*) 
+    FROM users 
+    WHERE id = ${user_id}
+    IS TRUE`); //게시글 작성 유저 확인
 
-    await dataSource.query(`SELECT id FROM users;`, (err, idObjs) => { //게시글 유저 존재 확인
-        for (const idObj of idObjs) {
-            if (user_id === idObj['id']) {
-                dataSource.query(
-                    `INSERT INTO posts (
-                        title,
-                        content,
-                        user_id
-                    ) VALUES (?, ?, ?);`, [title, content, user_id]);
-                return res.status(201).json({ message: "postCreated" });
-            }
-        }
+    if (userCheck[0]['count(*)'] == 1) {
+        await dataSource.query(
+            `INSERT INTO posts (
+                title,
+                content,
+                user_id
+            ) VALUES (?, ?, ?);`, [title, content, user_id]);
+        return res.status(201).json({ message: "postCreated" });
+    }
+    
         res.status(404).json({ message: "user id is not exist!" });
     });
-});
+
 
 app.listen(PORT, () => {
     console.log(`server is listning on ${PORT}`);
