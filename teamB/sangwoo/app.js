@@ -154,6 +154,17 @@ app.patch("/posts/:userId/:postId", async(req, res) => {
     );
 });
 
+// 게시글 삭제하기
+app.delete("/posts/:postId", async (req, res) => {
+    const { postId } = req.params;
+
+    await myDataSource.query(
+        `DELETE FROM posts
+        WHERE posts.id = ${postId}`
+    );
+    res.status(200).json({ message: "postingDeleted" });
+});
+
 const server = http.createServer(app);
 const PORT = process.env.PORT;
 
