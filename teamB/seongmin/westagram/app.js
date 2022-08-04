@@ -13,7 +13,7 @@ app.use(express.json());
 app.use(cors());
 app.use(morgan('dev'));
 
-const myDataSource = new DataSource({
+const dataSource = new DataSource({
     type: `mysql`,
     host: process.env.TYPEORM_HOST,
     port: process.env.TYPEORM_PORT,
@@ -22,9 +22,12 @@ const myDataSource = new DataSource({
     database: process.env.TYPEORM_DATABASE
 });
 
-myDataSource.initialize()
+dataSource.initialize()
     .then(()=> {
         console.log('Data Source has been initialized!')
+    })
+    .catch((err)=> {
+        console.log('Error during Data Source intialization', err)
     })
 
 //server health check
@@ -33,7 +36,7 @@ app.get('/ping', (req,res)=> {
 });
 
 app.get('/users', async(req, res)=> {
-    await myDataSource.query(
+    await dataSource.query(
     `SELECT
         u.id,
         u.name,
@@ -47,7 +50,8 @@ app.get('/users', async(req, res)=> {
 
 app.post('/users/sign-up', async(req, res) => {
     const { name, email, profile_image, password } = req.body;
-    await myDataSource.query(
+
+    await dataSource.query(
         `INSERT INTO users (
             name,
             email,
@@ -60,16 +64,23 @@ app.post('/users/sign-up', async(req, res) => {
     res.status(201).json({ mesaage: "userCreated"});
 });
 
-app.post('/posts/add-post', async(req, res) => {
+app.post('/post', async(req, res) => {
     const { title, content, user_id } = req.body;
-    await myDataSource.query(
-        `INSERT INTO posts (
-            title,
-            content,
-            user_id
-        ) VALUES (?, ?, ?);`, [title, content, user_id]
-    );
-    res.status(201).json({ message : "postCreated"});
+
+    await dataSource.query(`SELECT id FROM users;`, (err, idObjs) => { //게시글 유저 존재 확인
+        for (const idObj of idObjs) {
+            if (user_id === idObj['id']) {
+                dataSource.query(
+                    `INSERT INTO posts (
+                        title,
+                        content,
+                        user_id
+                    ) VALUES (?, ?, ?);`, [title, content, user_id]);
+                return res.status(201).json({ message: "postCreated" });
+            }
+        }
+        res.status(404).json({ message: "user id is not exist!" });
+    });
 });
 
 app.listen(PORT, () => {
