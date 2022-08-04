@@ -34,7 +34,7 @@ app.get("/ping", (reg, res) => {
 });
 
 // 회원가입 엔드포인트
-app.post("/user/sign-up", async (req, res) => {
+app.post("/user/signup", async (req, res) => {
     const { name, email, password, profile_image } = req.body;
 
     await myDataSource.query(
@@ -153,18 +153,6 @@ app.patch("/posts/:userId/:postId", async(req, res) => {
             }
     );
 });
-
-app.delete("/posts/:postId", async (req, res) => {
-    const { postId } = req.params;
-
-    await myDataSource.query(
-        `DELETE FROM posts
-        WHERE posts.id = ${postId}`
-    );
-    res.status(200).json({ message: "postingDeleted" });
-});
-
-
 const server = http.createServer(app);
 const PORT = process.env.PORT;
 
