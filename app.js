@@ -94,10 +94,10 @@ app.get('/posts/:user_id', async (req, res) => {
   });
 });
 
-
+// ****************************************************************
 // PUT new data to specific posts row after GET post
 //var updatePartOne = express.Router();
-app.put('/updatePosts', async (req, res) => {
+app.put('/updatePosts', async (req, res, next) => {
 //  const postId = req.params['post_id'];
 //  const userId = req.params['user_id'];
   const {title, content, postId, userId} = req.body;
@@ -106,39 +106,49 @@ app.put('/updatePosts', async (req, res) => {
     `UPDATE posts
         SET
           title = ?,
-          content = ?,
-          user_id = ?
+          content = ?
         WHERE post_id = ?
         AND user_id = ?`,
-        [title, content, userId, postId, userId]);
+        [title, content, postId, userId]
+      );
+  next()
+}, (req, res) => {
+ const postId = parseInt(req.body.postId);
+ const userId = parseInt(req.body.userId);
 
-  res.status(201).json({message: 'successfully updated'})
-});
-/*
-var updatePartTwo = express.Router();
-updatePartTwo.get('/updatePosts', async (req, res) => {
-  const postId = req.params['postId'];
-  const userId = req.params['userId'];
-  const new_userId = req.params['new_user_id']
-
-  await myDataSource.query(
-    `SELECT
-      p.title,
-      p.content,
-      p.user_id,
-      p.post_id,
-      u.name
+ myDataSource.query(
+   `SELECT
+     p.title,
+     p.content,
+     p.user_id,
+     p.post_id,
+     u.name
     FROM posts p
     INNER JOIN users u
-    ON p.user_id = ${new_userId}
-    AND p.post_id = ${postId}`, (err, rows) => {
-      res.status(204).json(rows);
-    });
+    ON p.user_id=u.id
+    WHERE p.user_id=${userId} AND p.post_id=${postId}
+    `, (err, rows) => {
+     res.status(200).json(rows);
+   });
 });
 
-app.use(updatePartOne, updatePartTwo);
-*/
+/*
+app.use('/updatePosts/next', async (req, res, next) => {
+ const postId = req.params['post_id'];
+ const userId = req.params['user_id'];
 
+ await myDataSource.query(
+   `SELECT
+     p.title,
+     p.content,
+     p.user_id,
+     p.post_id
+    FROM posts p`
+   , (err, rows) => {
+     res.status(204).json(rows);
+   });
+});
+*/
 // npm start
 const start = async () => {
   try {
