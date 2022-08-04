@@ -2,8 +2,9 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const { DataSource } = require('typeorm');
-const { json } = require('express');
-require('dotenv').config();
+const dotenv = require('dotenv');
+
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT;
@@ -13,7 +14,7 @@ app.use(cors());
 app.use(morgan('dev'));
 
 const myDataSource = new DataSource({
-    type: process.env.TYPEORM_CONNECTION,
+    type: `mysql`,
     host: process.env.TYPEORM_HOST,
     port: process.env.TYPEORM_PORT,
     username: process.env.TYPEORM_USERNAME,
@@ -26,19 +27,25 @@ myDataSource.initialize()
         console.log('Data Source has been initialized!')
     })
 
+//server health check
 app.get('/ping', (req,res)=> {
     res.status(200).json({mesaage : 'pong'})
 });
 
 app.get('/users', async(req, res)=> {
-    await myDataSource.query(`
-    SELECT u.id, u.name, u.email, u.profile_image, u.created_at FROM users u 
-    `, (err, rows) => {
+    await myDataSource.query(
+    `SELECT
+        u.id,
+        u.name,
+        u.email,
+        u.profile_image,
+        u.created_at
+    FROM users u;`, (err, rows) => {
         res.status(200).json(rows);
-    })
+    });
 });
 
-app.post('/signUp', async(req, res) => {
+app.post('/users/sign-up', async(req, res) => {
     const { name, email, profile_image, password } = req.body;
     await myDataSource.query(
         `INSERT INTO users (
@@ -53,7 +60,7 @@ app.post('/signUp', async(req, res) => {
     res.status(201).json({ mesaage: "userCreated"});
 });
 
-app.post('/addPost', async(req, res) => {
+app.post('/posts/add-post', async(req, res) => {
     const { title, content, user_id } = req.body;
     await myDataSource.query(
         `INSERT INTO posts (
