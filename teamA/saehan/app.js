@@ -46,7 +46,7 @@ app.get('/viewAllPosts', async(req,res,next) => {
     );
 });
 
-app.get('/viewSomeonePost/:userId', async(req,res,next) => {
+app.get('/viewSomeonePosts/:userId', async(req,res,next) => {
     const { userId } = req.params;
         await myDataSource.query(
             `SELECT
@@ -57,7 +57,6 @@ app.get('/viewSomeonePost/:userId', async(req,res,next) => {
             FROM posts p,users u
             WHERE p.user_id = ${userId}
             `, (err, rows) => {
-                console.log(rows);
                 let obj = {
                     Id : parseInt(userId)
                 };
