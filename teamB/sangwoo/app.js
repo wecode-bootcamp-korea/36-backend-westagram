@@ -28,12 +28,10 @@ app.use(express.json());
 app.use(cors());
 app.use(morgan("dev"));
 
-// health check
 app.get("/ping", (reg, res) => {
     res.status(201).json({ message: "pong" });
 });
 
-// 회원가입 엔드포인트
 app.post("/user/signup", async (req, res) => {
     const { name, email, password, profile_image } = req.body;
 
