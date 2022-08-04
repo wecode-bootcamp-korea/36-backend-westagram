@@ -22,38 +22,18 @@ const myDataSource = new DataSource({
   database: process.env.TYPEORM_DATABASE
 })
 
-myDataSource.initialize().then(() =>
-                                  {console.log('Data Source has been initialized!')
-});
+// check dbConnection
+myDataSource.initialize()
+            .then(() =>
+              {console.log('Data Source has been initialized!')};
+            );
 
 // health check
 app.get('/ping', function (req, res, next) {
   res.json({message: 'pong'});
 });
 
-app.get('/teamA', async (req, res) => {
-  await myDataSource.query(
-    `SELECT
-      a.id,
-      a.name,
-      a.MBTI
-     FROM teamA a`, (err, rows) => {
-       res.status(200).json(rows);
-     });
-});
-
-app.post('/teamA', async (req, res) => {
-  const {name, mbti} = req.body;
-
-  await myDataSource.query(
-    `INSERT INTO teamA(
-      name,
-      mbti
-    ) VALUES (?, ?);`, [name, mbti]);
-
-  res.status(201).json({message: 'successfully created'})
-});
-
+// npm start
 const start = async () => {
   try {
     app.listen(port, () => {
