@@ -28,7 +28,22 @@ app.use(cors());
 app.use(morgan("dev"));
 
 app.get("/ping", (req, res) => {
-  res.json({ message: "pong" });
+  res.status(200).json({ message: "pong" });
+});
+
+app.post("/users/sign-up", async (req, res) => {
+  const { name, age } = req.body;
+
+  await myDataSource.query(
+    `INSERT INTO users(
+      name, 
+      age
+      ) VALUES (?, ?)`,
+    [name, age]
+  );
+
+  res.status(201).json({ message: "New User Created!" });
+
 });
 
 const server = http.createServer(app);
