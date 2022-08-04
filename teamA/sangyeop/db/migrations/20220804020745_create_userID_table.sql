@@ -1,5 +1,5 @@
 -- migrate:up
-CREATE TABLE signup (
+CREATE TABLE userId (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL,
@@ -10,4 +10,4 @@ CREATE TABLE signup (
 );
 -- migrate:down
 
-DROP TABLE signup;
+DROP TABLE userId;
