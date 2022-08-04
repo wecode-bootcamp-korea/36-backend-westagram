@@ -26,17 +26,17 @@ app.get('/ping', function(req, res){
 app.get('/users', function(req, res){
     database.query(`
         SELECT 
-        id, 
-        name, 
-        email, 
-        profile_image, 
-        password, 
-        created_at, 
-        updated_at 
-        FROM users`, 
-        (err, rows) => {
-        res.status(200).json({users : rows});
-    })
+            id, 
+            name, 
+            email, 
+            profile_image, 
+            password, 
+            created_at, 
+            updated_at 
+        FROM users`, (err, rows) => {
+            res.status(200).json({users : rows});
+        }
+    )
 })
 
 app.post('/users', function(req, res){
@@ -48,24 +48,26 @@ app.post('/users', function(req, res){
             profile_image, 
             password
         ) VALUES (?, ?, ?, ?)`, 
-        [name, email, profile_image, password])
+        [name, email, profile_image, password]
+    )
+
     res.status(201).json({message: "userCreated"});
 })
 
 app.get('/posts', function(req, res){
     database.query(`
         SELECT 
-        id,
-        title,
-        content,
-        imageurl,
-        user_id,
-        created_at,
-        updated_at 
-        FROM posts`, 
-        (err, rows) => {
-        res.status(200).json({posts : rows});
-    })
+            id,
+            title,
+            content,
+            imageurl,
+            user_id,
+            created_at,
+            updated_at 
+        FROM posts`, (err, rows) => {
+            res.status(200).json({posts : rows});
+        }
+    )
 })
 
 app.post('/posts', function(req, res){
@@ -76,11 +78,26 @@ app.post('/posts', function(req, res){
             content,
             user_id    
         ) VALUES (?, ?, ?)`, 
-        [title, content, user_id])
+        [title, content, user_id]
+    )
+
     res.status(201).json({message: "postCreated"});
+})
+
+app.get('/data', function(req, res){
+    database.query(`
+    select 
+        users.id as userId, 
+        profile_image as userProfileImage, 
+        posts.id as postingId, 
+        imageurl as postingImageUrl, 
+        content as postingContent 
+    from users inner join posts on users.id = posts.user_id`, (err, rows) => {
+            res.status(200).json({data : rows});
+        }
+    )
 })
 
 app.listen(process.env.PORT, function () {
   console.log(`server listening on port ${process.env.PORT}`)
 })
-
