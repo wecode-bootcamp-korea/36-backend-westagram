@@ -4,10 +4,12 @@ const app = express();
 const cors = require("cors");
 const morgan = require("morgan");
 
+
 const dotenv = require("dotenv");
 dotenv.config()
 
 const { DataSource } = require('typeorm');
+const { title } = require("process");
 
 const myDataSource = new DataSource({
   type: process.env.TYPEORM_CONNECTION,
@@ -18,6 +20,7 @@ const myDataSource = new DataSource({
   database: process.env.TYPEORM_DATABASE
 })
 
+
 myDataSource.initialize()
   .then(() => {
     console.log("Data Source has been initialized");
@@ -27,9 +30,24 @@ app.use(express.json());
 app.use(cors());
 app.use(morgan('combined'));
 
-
+//health check
 app.get("/ping", (req,res) => {
-  res.json({ message: "pong"});
+  res.status(200).json({ message: "pong"});
+});
+
+app.post('/users', async (req, res) => {
+  const { id, password, name, age} = req.body
+
+  await myDataSource.query(
+    `INSERT INTO users(
+      user_id,
+      user_pw,
+      user_name,
+      user_age
+    ) VALUES(?, ?, ?, ?);
+    `, [ id, password , name, age ]
+  ) 
+      res.status(200).json({ message: 'userCreated'})
 });
 
 const server = http.createServer(app);
@@ -38,5 +56,4 @@ const PORT = process.env.PORT;
 const start = async () => {
   server.listen(PORT, () => console.log(`Server is listening at ${PORT}`));
 }
-
 start();
