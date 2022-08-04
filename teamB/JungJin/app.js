@@ -18,9 +18,34 @@ app.use(cors())
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
 app.use(express.json());
 
-
 app.get('/ping', function(req, res){
     res.json({message: 'pong'})
+})
+
+app.get('/users', function(req, res){
+    const query = myDataSource.query(`SELECT 
+        id, 
+        name, 
+        email, 
+        profile_image, 
+        password, 
+        created_at, 
+        updated_at 
+        FROM users`, (err, rows) => {
+        res.status(200).json({users : rows});
+    })
+})
+
+app.post('/users', function(req, res){
+    const {name, email, profile_image, password} = req.body
+    const query = myDataSource.query(`INSERT INTO users(
+        name, 
+        email, 
+        profile_image, 
+        password
+        ) VALUES (?, ?, ?, ?)`, 
+        [name, email, profile_image, password])
+    res.status(201).json({message: "userCreated"});
 })
 
 app.listen(process.env.PORT, function () {
