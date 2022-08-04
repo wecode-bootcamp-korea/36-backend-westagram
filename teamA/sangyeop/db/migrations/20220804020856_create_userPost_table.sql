@@ -1,5 +1,5 @@
 -- migrate:up
-CREATE TABLE books (
+CREATE TABLE posts (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(100) NOT NULL,
     description VARCHAR(2000) NULL,
@@ -10,4 +10,4 @@ CREATE TABLE books (
 
 -- migrate:down
 
-DROP TABLE books;
+DROP TABLE posts;

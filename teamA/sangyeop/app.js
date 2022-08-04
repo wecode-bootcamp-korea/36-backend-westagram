@@ -27,7 +27,6 @@ app.use(express.json());
 app.use(cors());
 app.use(morgan('dev'));
 
-//서버 작동 확인
 app.get("/ping", (req,res) => {
   res.json({ message: "pong"});
 });
