@@ -121,42 +121,46 @@ app.get('/posts/:id', async (req, res) => {
 
 //Assignment :6 유저의 게시글 수정하기
 
+app.patch('/patch', async(req, res) => {
+  const { post_no, editPost, users_no } = req.body;
+    await myDataSource.query(
+      `UPDATE posts SET post = ? WHERE posts.no = ${post_no} AND posts.users_no = ${users_no}
+      `,      
+      [editPost, users_no, post_no]
+    )
+    res.status(201).json({ message: 'Success'});
+
+    // await myDataSource.query(
+    //   `SELECT
+    //   p.no,
+    //   p.users_no,
+    //   p.title,
+    //   p.post
+    //   FROM posts p`,
+    //   (err, rows) => {
+    //     res.status(200).json(rows )
+    //   })
+});
+
+
+
 // app.patch('/patch', async(req, res) => {
 //   const { user_no, post_no, update_post} = req.body;
 //     await myDataSource.query(
 //       `UPDATE posts 
-//       SET post = ? 
-//       WHERE posts.no = ${post_no} AND posts.users_no = ${user_no}
-//       `,      
-//       [user_no, post_no, update_post]
+//        SET post = ? 
+//        WHERE posts.no = ${post_no} AND posts.users_no = ${user_no},
+
+//        select * from posts;
+
+//       ` 
 //       ,(err, rows) => {
-//         newPost = [];
 
-//         post = {
-//           userId : rows[0].user_id,
-//         }
-
-//         post.push(newPost);
+//         res.status(201).json({ rows });
 //       }
- 
 //     );
-//     res.status(201).json({ newPost });
+
 // });
-
-app.patch('/patch', async(req, res) => {
-  const { user_no, post_no, update_post} = req.body;
-    await myDataSource.query(
-      `UPDATE posts 
-      SET POSTS = (SELECT POSTS.POST
-        FROM (SELECT POSTS FROM posts ))
-      `
-      ,(err, rows) => {
-
-        res.status(201).json({ rows });
-      }
-    );
-
-});
 
 //create  book
 app.post("/books", async (req, res, next) => {
