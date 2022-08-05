@@ -31,7 +31,6 @@ app.get("/ping", (req, res) => {
   res.status(200).json({ message: "pong" });
 });
 
-// POST userSignup
 app.post("/users/sign-up", async (req, res) => {
   const { name, age } = req.body;
 
@@ -44,6 +43,21 @@ app.post("/users/sign-up", async (req, res) => {
   );
 
   res.status(201).json({ message: "New User Created!" });
+
+});
+
+app.post("/posts", async (req, res, next) => {
+  const { title, description } = req.body;
+
+  await myDataSource.query(`
+    INSERT INTO posts (
+      title, 
+      description
+    ) VALUES (?, ?);`,
+    [title, description]
+  );
+
+  res.status(201).json({ message: "New Post Created!" });
 });
 
 // POST post
@@ -164,3 +178,4 @@ const serverListening = () =>
   console.log(`💫 Server listening on port http://localhost:${PORT} ⛱`);
 
 server.listen(PORT, serverListening);
+
