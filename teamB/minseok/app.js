@@ -36,8 +36,7 @@ app.get("/ping", (req, res)=> {
 
 app.post('/users', async (req, res) => {
 	const {name, birth, contact, password} = req.body;
-    
-	await myDataSource.query(
+    await myDataSource.query(
 		`INSERT INTO users_table(
 			name,
 			birth,
@@ -52,8 +51,7 @@ app.post('/users', async (req, res) => {
 
 app.post('/posts', async (req, res) => {
 	const {title, content, user_id, userProfileImage, postingImageUrl} = req.body;
-    
-	await myDataSource.query(
+    await myDataSource.query(
 		`INSERT INTO posts(
 			title,
 			content,
@@ -77,15 +75,9 @@ app.get('/lists', async (req, res) => {
             userProfileImage,
             postingImageUrl
         FROM posts `,
-        (err, rows) => {
-            res.status(200).json({data:rows})
+        (err, rows) => {res.status(200).json({data:rows})
 })})
 
-
-/*app.get('/u/:postid', async(req, res)=>{
-    const receiveId =req.params
-    console.log(receiveId)})
-*/
 app.get('/userlists/:id', async(req, res)=>{
     const receiveId =req.params.id;
     await myDataSource.query(
