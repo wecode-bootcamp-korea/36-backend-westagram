@@ -60,7 +60,7 @@ app.post('/posts', async (req, res) => {
    `,
    [title, content, user_id]);
 
-   res.status(202).json({message: 'postCreated'});
+   res.status(201).json({message: 'postCreated'});
  });
 
 app.get('/posts', async (req, res) => {
@@ -115,20 +115,20 @@ app.put('/posts', async (req, res, next) => {
  const postId = parseInt(req.body.postId);
  const userId = parseInt(req.body.userId);
 
- myDataSource.query(
-   `SELECT
-     p.title,
-     p.content,
-     p.user_id,
-     p.post_id,
-     u.name
-    FROM posts p
-    INNER JOIN users u
-    ON p.user_id=u.id
-    WHERE p.user_id=${userId} AND p.post_id=${postId}
-    `, (err, rows) => {
+  const data = myDataSource.query(
+                 `SELECT
+                   p.title,
+                   p.content,
+                   p.user_id,
+                   p.post_id,
+                   u.name
+                 FROM posts p
+                 INNER JOIN users u
+                 ON p.user_id=u.id
+                 WHERE p.user_id=${userId} AND p.post_id=${postId}
+    `);
+
      res.status(200).json(rows);
-   });
 });
 
 app.delete('/posts/:postId', async (req,res) => {
@@ -139,7 +139,7 @@ app.delete('/posts/:postId', async (req,res) => {
     WHERE posts.post_id=${postId}`
   );
 
-  res.status(20).json({message: "postingDeleted"});
+  res.status(200).json({message: "postingDeleted"});
 });
 
 app.post('/like', async (req, res) => {
