@@ -35,49 +35,32 @@ app.get("/ping", (req, res)=> {
 });
 
 app.post('/users', async (req, res) => {
-    const {
-        name,
-        birth,
-        contact,
-        password
-    } = req.body;
+    const {name, birth, contact, password} = req.body;
     await myDataSource.query(
         `INSERT INTO users_table(
-			name,
-			birth,
+            name,
+            birth,
             contact,
             password
-		) VALUES (?, ?, ?, ?);
-		`,
+        ) VALUES (?, ?, ?, ?); `,
         [name, birth, contact, password]
     );
-    res.status(201).json({
-        message: "userCreated"
-    });
+    res.status(201).json({message: "userCreated"});
 })
 
 app.post('/posts', async (req, res) => {
-    const {
-        title,
-        content,
-        user_id,
-        userProfileImage,
-        postingImageUrl
-    } = req.body;
+    const {title, content, user_id, userProfileImage, postingImageUrl} = req.body;
     await myDataSource.query(
         `INSERT INTO posts(
-			title,
-			content,
+            title,
+            content,
             user_id,
             userProfileImage,
             postingImageUrl
-		) VALUES (?, ?, ?, ? ,?);
-		`,
+        ) VALUES (?, ?, ?, ? ,?); `,
         [title, content, user_id, userProfileImage, postingImageUrl]
     );
-    res.status(201).json({
-        message: "postCreated"
-    });
+    res.status(201).json({message: "postCreated"});
 });
 
 app.get('/lists', async (req, res) => {
