@@ -92,10 +92,10 @@ app.delete('/posts/:id', function(req, res){
         WHERE id = ${id}`
     )
 
-    res.status(204).json({message: "postingDeleted"});
+    res.status(204).send();
 })
 
-app.get('/data', function(req, res){
+app.get('/userpostimage', function(req, res){
     database.query(`
         SELECT 
             users.id as userId, 
@@ -110,7 +110,7 @@ app.get('/data', function(req, res){
     )
 })
 
-app.get('/data/:id', function(req, res){
+app.get('/userpostimage/:id', function(req, res){
     const id = req.params.id
     database.query(`
         SELECT 
@@ -119,8 +119,7 @@ app.get('/data/:id', function(req, res){
             posts.id AS postingId, 
             imageurl AS postingImageUrl, 
             content AS postingContent 
-        FROM users 
-        INNER JOIN posts ON users.id = posts.user_id 
+        FROM users INNER JOIN posts ON users.id = posts.user_id 
         WHERE users.id = ${id}`, (err, rows) => {
         let postings = []
         let data = {
@@ -140,7 +139,7 @@ app.get('/data/:id', function(req, res){
     )
 })
 
-app.get('/lists', function(req, res){
+app.get('/userposttitle', function(req, res){
     database.query(
         `SELECT 
             users.id AS userId, 
@@ -155,7 +154,7 @@ app.get('/lists', function(req, res){
     )
 })
 
-app.get('/lists/:id', function(req, res){
+app.get('/userposttitle/:id', function(req, res){
     const id = req.params.id
     database.query(`
         SELECT 
@@ -172,7 +171,7 @@ app.get('/lists/:id', function(req, res){
     )
 })
 
-app.patch('/lists/:id', function(req, res){
+app.patch('/userposttitle/:id', function(req, res){
     const id = req.params.id
     const content = req.body.content
     database.query(`
@@ -189,9 +188,9 @@ app.get('/likes', function(req, res){
     database.query(`
         SELECT 
             users.id AS userId, 
-            users.name AS 좋아요누른사람, 
+            users.name AS heartname, 
             posts.id AS postsId, 
-            posts.title AS 좋아요누른글 
+            posts.title AS hearttitle 
         FROM users 
         INNER JOIN likes ON users.id = likes.user_id 
         INNER JOIN posts ON likes.post_id = posts.id 
