@@ -14,11 +14,10 @@ const myDataSource = new DataSource({
     port: process.env.TYPEORM_PORT,
     username: process.env.TYPEORM_USERNAME,
     password: process.env.TYPEORM_PASSWORD,
-    database: process.env.TYPEORM_DATABASE
+    database: process.env.TYPEORM_DATABASE,
 });
 
-myDataSource.initialize()
-.then(() => {
+myDataSource.initialize().then(() => {
     console.log("Data Source has been initialize");
 });
 
@@ -34,7 +33,7 @@ app.get("/ping", (reg, res) => {
 
 app.post("/user/sign-up", async (req, res) => {
     const { name, email, password, profile_image } = req.body;
-
+    
     await myDataSource.query(
         ` 
         INSERT INTO users(
@@ -65,30 +64,25 @@ app.post("/posts", async (req, res) => {
     res.status(201).json({ message: "postCreated" });
 });
 
-
 app.get("/posts", async (req, res) => {
-    await myDataSource.manager.query(
+    const postView = await myDataSource.query(
         `SELECT 
             u.id AS userId,
             u.profile_Image AS userProfileImage,
             p.id AS postingId,
             p.title AS postingTitle,
             p.content AS postingContent
-        FROM users u
-        INNER JOIN posts p ON
-        u.id = p.user_id
+        FROM users AS u
+        INNER JOIN posts AS p ON u.id = p.user_id
         `,
-        (err, rows) => {
-            res.status(200).json({ data: rows });
-        }
     );
+        res.status(200).json({ data: postView });
 });
-
 
 app.get("/posts/:userId", async (req, res) => {
     const { userId } = req.params;
 
-    await myDataSource.manager.query(
+    await myDataSource.query(
         `SELECT
             u.id AS userId,
             u.name AS userName,
@@ -96,62 +90,57 @@ app.get("/posts/:userId", async (req, res) => {
             p.id AS postingId,
             p.title AS postingTitle,
             p.content AS postingContent
-        FROM users u
-        INNER JOIN posts p ON u.id = p.user_id
+        FROM users AS u
+        INNER JOIN posts AS p ON u.id = p.user_id
         WHERE u.id = ${userId}
         `,
         (err, rows) => {
             let postings = [];
-            let data = {
-                userId : rows[0].userId,
+            let result = {
+                userId: rows[0].userId,
                 userName: rows[0].userName,
-                userProfileImage : rows[0].userProfileImage,
-                postings
-            }
-            for(let i in rows){
+                userProfileImage: rows[0].userProfileImage,
+                postings,
+            };
+            for (let i in rows) {
                 postings.push({
                     postingId: rows[i].postingId,
                     postingTitle: rows[i].postingTitle,
-                    postingContent: rows[i].postingContent
-                })
+                    postingContent: rows[i].postingContent,
+                });
             }
-            res.status(200).json({ data: data });
+        res.status(200).json({ data: result });
         }
     );
 });
 
-
-app.patch("/posts/:userId/:postId", async(req, res) => {
-    const {userId} = req.params;
-    const {postId} = req.params;
-    const {title, content} = req.body;
-
+app.patch("/posts/:userId/:postId", async (req, res) => {
+    const { userId, postId } = req.params;
+    const { title, content } = req.body;
+    
     await myDataSource.query(
         `UPDATE posts
         SET
             title = ?,
             content = ?
         WHERE posts.id = ${postId}
-        `, [title, content]
+        `,
+        [title, content]
     );
-        await myDataSource.manager.query(
-            `SELECT 
-                u.id AS userId,
-                u.name AS userName,
-                p.id AS postingId,
-                p.title AS postingTitle,
-                p.content AS postingContent
-            FROM users u
-            INNER JOIN posts p ON u.id = p.user_id
-            WHERE u.id = ${userId} AND p.id = ${postId}
+    const userPostPatch = await myDataSource.query(
+        `SELECT 
+            u.id AS userId,
+            u.name AS userName,
+            p.id AS postingId,
+            p.title AS postingTitle,
+            p.content AS postingContent
+        FROM users AS u
+        INNER JOIN posts AS p ON u.id = p.user_id
+        WHERE u.id = ${userId} AND p.id = ${postId}
             `,
-            (err, rows)=>{
-                res.status(201).json({data : rows});
-            }
-            
     );
+    res.status(201).json({ data: userPostPatch })
 });
-
 
 app.delete("/posts/:postId", async (req, res) => {
     const { postId } = req.params;
@@ -163,10 +152,9 @@ app.delete("/posts/:postId", async (req, res) => {
     res.status(200).json({ message: "postingDeleted" });
 });
 
-
-app.post('/posts/like/:postId', async(req, res) => {
-    const {postId} = req.params;
-    const {user_id} = req.body;
+app.post("/posts/like/:postId", async (req, res) => {
+    const { postId } = req.params;
+    const { user_id } = req.body;
 
     await myDataSource.query(
         `
@@ -176,9 +164,9 @@ app.post('/posts/like/:postId', async(req, res) => {
         ) VALUES(?, ${postId})
         `,
         [user_id]
-    ) 
+    );
     res.status(200).json({ message: "likeCreated" });
-})
+});
 
 const server = http.createServer(app);
 const PORT = process.env.PORT;
