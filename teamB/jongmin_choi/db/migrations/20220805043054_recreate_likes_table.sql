@@ -4,9 +4,10 @@ CREATE TABLE likes(
     user_id INT NOT NULL,
     post_id INT NOT NULL,
     CONSTRAINT likes_user_id_users_id_fkey FOREIGN KEY (user_id) REFERENCES users(id),
-    CONSTRAINT likes_post_id_posts_id_fkey FOREIGN KEY (post_id) REFERENCES posts(id)
+    CONSTRAINT likes_post_id_posts_id_fkey FOREIGN KEY (post_id) REFERENCES posts(id),
+    CONSTRAINT unique_likes UNIQUE (user_id, post_id)
 );
 
+
 -- migrate:down
-DROP TABLE likes;
 
