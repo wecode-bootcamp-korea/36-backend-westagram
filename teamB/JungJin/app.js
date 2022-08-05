@@ -84,18 +84,134 @@ app.post('/posts', function(req, res){
     res.status(201).json({message: "postCreated"});
 })
 
+app.delete('/posts/:id', function(req, res){
+    const id = req.params.id
+    database.query(`
+        DELETE 
+        FROM posts 
+        WHERE id = ${id}`
+    )
+
+    res.status(204).json({message: "postingDeleted"});
+})
+
 app.get('/data', function(req, res){
     database.query(`
-    select 
-        users.id as userId, 
-        profile_image as userProfileImage, 
-        posts.id as postingId, 
-        imageurl as postingImageUrl, 
-        content as postingContent 
-    from users inner join posts on users.id = posts.user_id`, (err, rows) => {
+        SELECT 
+            users.id as userId, 
+            profile_image as userProfileImage, 
+            posts.id as postingId, 
+            imageurl as postingImageUrl, 
+            content as postingContent 
+        FROM users 
+        INNER JOIN posts ON users.id = posts.user_id`, (err, rows) => {
             res.status(200).json({data : rows});
         }
     )
+})
+
+app.get('/data/:id', function(req, res){
+    const id = req.params.id
+    database.query(`
+        SELECT 
+            users.id AS userId, 
+            profile_image AS userProfileImage, 
+            posts.id AS postingId, 
+            imageurl AS postingImageUrl, 
+            content AS postingContent 
+        FROM users 
+        INNER JOIN posts ON users.id = posts.user_id 
+        WHERE users.id = ${id}`, (err, rows) => {
+        let postings = []
+        let data = {
+            userId: rows[0].userId,
+            userProfileImage: rows[0].userProfileImage,
+            postings:postings
+        }
+        for(let r of rows){
+            postings.push({
+                postingId: r.postingId,
+                postingImageUrl: r.postingImageUrl,
+                postingContent: r.postingContent
+            })
+        }
+            res.status(200).json({data : data});
+        }
+    )
+})
+
+app.get('/lists', function(req, res){
+    database.query(
+        `SELECT 
+            users.id AS userId, 
+            users.name AS userName, 
+            posts.id AS postingId, 
+            posts.title AS postingTitle, 
+            content AS postingContent 
+        FROM users 
+        INNER JOIN posts ON users.id = posts.user_id`, (err, rows) => {
+            res.status(200).json({data : rows});
+        }
+    )
+})
+
+app.get('/lists/:id', function(req, res){
+    const id = req.params.id
+    database.query(`
+        SELECT 
+            users.id AS userId, 
+            users.name AS userName, 
+            posts.id AS postingId, 
+            posts.title AS postingTitle, 
+            content AS postingContent 
+        FROM users 
+        INNER JOIN posts ON users.id = posts.user_id 
+        WHERE posts.id = ${id}`, (err, rows) => {
+            res.status(200).json({data : rows[0]});
+        }
+    )
+})
+
+app.patch('/lists/:id', function(req, res){
+    const id = req.params.id
+    const content = req.body.content
+    database.query(`
+        UPDATE posts 
+            SET ? WHERE id = ${id}`, 
+            {content:content}
+        )
+
+    res.status(201).json({message: "UpdatedSuccess"});
+})
+
+
+app.get('/likes', function(req, res){
+    database.query(`
+        SELECT 
+            users.id AS userId, 
+            users.name AS 좋아요누른사람, 
+            posts.id AS postsId, 
+            posts.title AS 좋아요누른글 
+        FROM users 
+        INNER JOIN likes ON users.id = likes.user_id 
+        INNER JOIN posts ON likes.post_id = posts.id 
+        ORDER BY users.id, posts.id`, (err, rows) => {
+            res.status(200).json({likes : rows});
+        }
+    )
+})
+
+app.post('/likes', function(req, res){
+    const {user_id, post_id} = req.body
+    database.query(`
+        INSERT INTO likes(
+            user_id,
+            post_id
+        ) VALUES (?, ?)`, 
+        [user_id, post_id]        
+    )
+
+    res.status(201).json({message: "likeCreated"});
 })
 
 app.listen(process.env.PORT, function () {
