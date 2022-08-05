@@ -94,13 +94,12 @@ app.get("/posts-with-users", async (req, res) => {
     WHERE u.id=p.user_id`,
 
     (err, rows) => {
-      
       let postings = [];
       let data = {
         id: rows[0].id,
         name: rows[0].name,
         age: rows[0].age,
-        postings: postings,
+        postings,
       };
 
       for (let i of rows) {
