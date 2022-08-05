@@ -17,14 +17,14 @@
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `likes` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `user_id` int NOT NULL,
-  `post_id` int NOT NULL,
+  `user_id` int DEFAULT NULL,
+  `post_id` int DEFAULT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `user_id` (`user_id`,`post_id`),
   KEY `like_post_id_fkey` (`post_id`),
-  KEY `like_user_id_fkey` (`user_id`),
   CONSTRAINT `like_post_id_fkey` FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`),
   CONSTRAINT `like_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -35,12 +35,15 @@ CREATE TABLE `likes` (
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `posts` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `title` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  `description` varchar(2000) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `title` varchar(100) NOT NULL,
+  `description` varchar(2000) DEFAULT NULL,
+  `user_id` int NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  PRIMARY KEY (`id`),
+  KEY `posts_user_id_fkey` (`user_id`),
+  CONSTRAINT `posts_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -63,30 +66,12 @@ CREATE TABLE `schema_migrations` (
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `users` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+  `name` varchar(100) NOT NULL,
   `age` int DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `users_posts`
---
-
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `users_posts` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `user_id` int NOT NULL,
-  `post_id` int NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `post_users_post_id_fkey` (`post_id`),
-  KEY `post_users_user_id_fkey` (`user_id`),
-  CONSTRAINT `post_users_post_id_fkey` FOREIGN KEY (`post_id`) REFERENCES `posts` (`id`),
-  CONSTRAINT `post_users_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -110,8 +95,8 @@ CREATE TABLE `users_posts` (
 
 LOCK TABLES `schema_migrations` WRITE;
 INSERT INTO `schema_migrations` (version) VALUES
-  ('20220802034416'),
-  ('20220802034427'),
-  ('20220802034509'),
-  ('20220802112251');
+  ('20220805045016'),
+  ('20220805045022'),
+  ('20220805045028'),
+  ('20220805050049');
 UNLOCK TABLES;
