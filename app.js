@@ -27,12 +27,10 @@ myDataSource.initialize()
                 {console.log('Data Source has been initialized!')}
               );
 
-// health check
 app.get('/ping', function (req, res, next) {
   res.json({message: 'pong'});
 });
 
-// POST users
 app.post('/users', async (req, res) => {
   const {name, gender, birth, contact, mbti} = req.body;
 
@@ -43,12 +41,13 @@ app.post('/users', async (req, res) => {
       birth,
       contact,
       mbti
-    ) VALUES (?, ?, ?, ?, ?);`, [name, gender, birth, contact, mbti]);
+    ) VALUES (?, ?, ?, ?, ?);
+    `, 
+    [name, gender, birth, contact, mbti]);
 
     res.status(201).json({message: 'userCreated'});
   });
 
-// POST posts
 app.post('/posts', async (req, res) => {
  const {title, content, user_id} = req.body;
 
@@ -56,25 +55,28 @@ app.post('/posts', async (req, res) => {
    `INSERT INTO posts(
      title,
      content,
-     user_id,
-     like_count
-   ) VALUES (?, ?, ?, 0);`,
+     user_id
+   ) VALUES (?, ?, ?);
+   `,
    [title, content, user_id]);
 
    res.status(202).json({message: 'postCreated'});
  });
 
-// GET posts
 app.get('/posts', async (req, res) => {
   await myDataSource.query(
     `SELECT
-      *
-    FROM posts`, (err, rows) => {
+      p.post_id,
+      p.title,
+      p.content,
+      p.user_id,
+      p.created_at,
+      p.updated_at
+    FROM posts p`, (err, rows) => {
       res.status(200).json(rows);
     });
 });
 
-// GET posts of specific user_id
 app.get('/posts/:user_id', async (req, res) => {
   const userId = req.params['user_id'];
 
@@ -95,7 +97,6 @@ app.get('/posts/:user_id', async (req, res) => {
   });
 });
 
-// PUT new data to specific posts row after GET post
 app.put('/posts', async (req, res, next) => {
   const {title, content, postId, userId} = req.body;
 
@@ -105,7 +106,8 @@ app.put('/posts', async (req, res, next) => {
           title = ?,
           content = ?
         WHERE post_id = ?
-        AND user_id = ?`,
+        AND user_id = ?
+        `,
         [title, content, postId, userId]
       );
   next()
@@ -129,8 +131,7 @@ app.put('/posts', async (req, res, next) => {
    });
 });
 
-// DELETE post
-app.delete('/posts/:postId', async (req,res,next) => {
+app.delete('/posts/:postId', async (req,res) => {
   const {postId} = req.params;
 
   await myDataSource.query(
@@ -138,24 +139,23 @@ app.delete('/posts/:postId', async (req,res,next) => {
     WHERE posts.post_id=${postId}`
   );
 
-  res.status(202).json({message: "postingDeleted"});
+  res.status(20).json({message: "postingDeleted"});
 });
 
-// PUT like_count
-app.put('/like/:postId', async (req, res) => {
-  const {postId} = req.params;
+app.post('/like', async (req, res) => {
+  const {userId, postId} = req.body;
 
   await myDataSource.query(
-    `UPDATE posts
-      SET
-        like_count = like_count + 1
-      WHERE posts.post_id = ${postId}`
-    );
+    `INSERT INTO likes(
+        user_id,
+        post_id
+    ) VALUES (?, ?)
+    `, 
+    [userId, postId]);
 
-  res.status(202).json({message: 'likeCreated'})
+  res.status(202).json({message: 'likeCreated'});
 });
 
-// npm start
 const start = async () => {
   try {
     app.listen(port, () => {
