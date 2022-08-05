@@ -8,7 +8,7 @@ const morgan = require("morgan");
 const dotenv = require("dotenv");
 dotenv.config()
 
-const { DataSource, SimpleConsoleLogger } = require('typeorm');
+const { DataSource } = require('typeorm');
 const { title } = require("process");
 
 const myDataSource = new DataSource({
@@ -48,29 +48,29 @@ app.post('/users', async (req, res) => {
     ) VALUES(?, ?, ?, ?);
     `, [ id, password , name, age ]
   ) 
-      res.status(200).json({ message: 'userCreated'})
+      res.status(201).json({ message: 'userCreated'})
 });
 
 
 app.post('/posts', async (req, res) => {
-  const { no, title, post } = req.body
+  const { user_id, title, post } = req.body
 
   await myDataSource.query(
     `INSERT INTO posts(
-      users_no,
+      user_id,
       title,
       post
     ) VALUES (?, ?, ?)
-    `, [ no, title, post ]
+    `, [ user_id, title, post ]
   )
-      res.status(200).json({ message: 'postCreated'})
+      res.status(201).json({ message: 'postCreated'})
 })
 
 
-app.get('/posts/viewAll', async (req, res) => {
+app.get('/posts/view-all', async (req, res) => {
   await myDataSource.manager.query(
     `SELECT 
-      users_no,
+      user_id,
       title,
       post
        FROM posts`,
@@ -91,7 +91,7 @@ app.get('/posts/:id', async (req, res) => {
       posts.no AS no,
       title AS posting FROM posts
       INNER JOIN users
-      ON users.no = posts.users_no WHERE users.no = ${id}
+      ON users.no = posts.user_id WHERE users.no = ${id}
 
     `, (err, rows) => {
 
@@ -113,29 +113,33 @@ app.get('/posts/:id', async (req, res) => {
     })
 });
 
-app.patch('/postEdit', async(req, res) => {
-  const { editPost, post_no, users_no } = req.body;
+app.patch('/posts', async(req, res) => {
+  const { editPost, post_no, user_id } = req.body;
     await myDataSource.query(
-      `UPDATE posts SET post = ? WHERE posts.no = ${post_no} AND posts.users_no = ${users_no}
+      `UPDATE posts 
+      SET post = ? 
+      WHERE 
+      posts.user_id = ${user_id}
+      AND  posts.no = ${post_no} 
       `,      
-      [editPost, users_no, post_no]
+      [editPost, post_no, user_id]
     )
 
     await myDataSource.query(
       `SELECT
       p.no,
-      p.users_no,
+      p.user_id,
       p.title,
       p.post
       FROM posts p
-      WHERE p.no=${users_no}`,
+      WHERE p.no=${post_no}`,
       (err, rows) => {
-        res.status(200).json( {data :rows} )
+        res.status(200).json( { data : rows , message : "edit Success"}  )
       })
 });
 
 
-app.delete('/postDelete/:no', async(req, res) => {
+app.delete('/post/:no', async(req, res) => {
   const { no } = req.params;
   
   await myDataSource.query(
@@ -147,7 +151,7 @@ app.delete('/postDelete/:no', async(req, res) => {
 });
 
 app.patch('/like/:post_no', async(req, res) => {
-  const { post_no } = req.paramsgit;
+  const { post_no } = req.params;
 
   await myDataSource.query(
     `UPDATE posts SET likes = likes + 1 WHERE posts.no = ${post_no}`,
