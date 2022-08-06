@@ -124,7 +124,7 @@ app.patch('/userPost/:postId', async(req, res) => {
         [title, content]
         );
     
-    const patchQuery = await myDataSource.query(
+    const Query = await myDataSource.query(
         `SELECT
             posts.user_id AS userId,
             users_table.name AS username,
@@ -136,7 +136,7 @@ app.patch('/userPost/:postId', async(req, res) => {
         WHERE posts.id = ${postingId}
         `,)
         
-    res.status(201).json({data : patchQuery});
+    res.status(201).json({data : Query});
     
 })
 
