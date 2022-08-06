@@ -30,13 +30,13 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(morgan("combined"));
-app.get("/ping", async (req, res)=> {
+app.get("/ping",  (req, res)=> {
     res.status(201).json({MESSAGE : "pong"});
 })
-app.post("/user", async (req, res)=>{
+app.post("/user", (req, res)=>{
     const { name, email, profile_image, password }= req.body;
 
-    await appDataSource.query(
+    appDataSource.query(
         `
         INSERT INTO users(
             name,
@@ -49,10 +49,10 @@ app.post("/user", async (req, res)=>{
     res.status(201).json({MEASSAGE : 'created_success!'});
 })
 
-app.post("/posts", async (req, res)=>{
+app.post("/posts", (req, res)=>{
     const { title, content, user_id } = req.body;
 
-    await appDataSource.query(
+    appDataSource.query(
         `
         INSERT INTO posts (
             title,
@@ -64,10 +64,10 @@ app.post("/posts", async (req, res)=>{
     res.status(201).json({MESSAGE : 'post_created!'})
 })
 
-app.get('/post', async (req,res)=>{
+app.get('/post',(req,res)=>{
     const {id} = req.body
 
-    await appDataSource.query(
+    appDataSource.query(
         `
         SELECT * 
         FROM posts 
@@ -76,24 +76,23 @@ app.get('/post', async (req,res)=>{
     ); 
 })
 
-app.patch("/post", async (req, res)=>{
+app.patch("/post", (req, res)=>{
     const { title, content,id } = req.body
 
-    await appDataSource.query(
+    appDataSource.query(
         `
         UPDATE posts 
-        SET 
-        title="${title}", 
-        content="${content}" 
+        SET title="${title}", 
+            content="${content}" 
         WHERE id=${id};
         ` //update 는 SET title="${title}", content="${content}" 처럼 따옴표를 꼭 넣어줘야 한다.
         );
         res.status(201).json({MESSAGE : 'success!'})
 })
-app.delete("/post", async (req, res)=>{
+app.delete("/post", (req, res)=>{
     const {id} = req.body
 
-    await appDataSource.query(
+    appDataSource.query(
         `
         DELETE 
         FROM posts 
@@ -101,10 +100,10 @@ app.delete("/post", async (req, res)=>{
         `, res.status(200).json({MESSAGE : "postingDeleted"})
     )
 })
-app.post('/likes', async (req, res)=>{
+app.post('/likes', (req, res)=>{
     const { user_id, post_id } = req.body
 
-    await appDataSource.query(
+    appDataSource.query(
         `
         INSERT INTO likes (
             user_id, 
@@ -117,7 +116,7 @@ app.post('/likes', async (req, res)=>{
 
 const server = http.createServer(app);
 
-const start = async ()=>{
+const start = ()=>{
     server.listen(PORT, ()=>console.log(`server is listening on port ${PORT}`));
 }
 
