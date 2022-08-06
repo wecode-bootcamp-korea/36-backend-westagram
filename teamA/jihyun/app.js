@@ -8,7 +8,7 @@ dotenv.config();
 
 const { DataSource } = require("typeorm");
 
-const myDataSource = new DataSource({
+const database = new DataSource({
   type: process.env.TYPEORM_CONNECTION,
   host: process.env.TYPEORM_HOST,
   port: process.env.TYPEORM_PORT,
@@ -17,13 +17,13 @@ const myDataSource = new DataSource({
   database: process.env.TYPEORM_DATABASE,
 });
 
-myDataSource.initialize()
+database.initialize()
   .then(() => {
     console.log("Data Source has been initialized!");
   })
   .catch((err) => {
     console.error("Error during Data Source initialization", err);
-    myDataSource.destroy();
+    database.destroy();
   });
 
 app = express();
@@ -32,16 +32,11 @@ app.use(cors());
 app.use(morgan("dev"));
 app.use(express.json());
 
-//health check
-app.get("/ping", (req, res) => {
-  res.status(201).json({ message: "pong" });
-});
-
 //signup
-app.post("/signup", async (req, res, next) => {
+app.post("/signup", async (req, res) => {
   const { name, email, password } = req.body;
 
-  await myDataSource.query(
+  await database.query(
     `INSERT INTO users (
       name, 
       email, 
@@ -55,10 +50,10 @@ app.post("/signup", async (req, res, next) => {
 });
 
 //posts
-app.post("/posts", async (req, res, next) => {
+app.post("/posts", async (req, res) => {
   const { title, content } = req.body;
 
-  await myDataSource.query(
+  await database.query(
     `INSERT INTO posts (
       title, 
       content
@@ -71,9 +66,9 @@ app.post("/posts", async (req, res, next) => {
 });
 
 //posts list
-app.get("/posts/list", async (req, res, next) => {
+app.get("/posts-list", (req, res) => {
 
-  await myDataSource.query(
+  database.query(
     `SELECT 
         u.id as "userId", 
         u.name as "userName", 
@@ -82,18 +77,18 @@ app.get("/posts/list", async (req, res, next) => {
         p.content as "postingContent" 
     FROM posts p 
     INNER JOIN users u ON p.user_id = u.id order by p.id`,
-    (error, rows) => {
+    (error, data) => {
 
-      res.status(200).json({ "data" : rows });
+      res.status(200).json({ "data" : data });
     }
   );
 });
 
 //posts list for each user
-app.get("/posts/list/userId=:userId", async(req, res, next) => {
+app.get("/posts-list/users/:userId", (req, res) => {
   const {userId} = req.params;
 
-  await myDataSource.query(
+  database.query(
     `SELECT
         u.id as "userId",
         u.name as "userName",
@@ -127,11 +122,11 @@ app.get("/posts/list/userId=:userId", async(req, res, next) => {
 });
 
 //patch post
-app.patch("/posts/list/:postId", async(req, res, next) => {
+app.patch("/posts-list/:postId", async(req, res) => {
   const { postingContent } = req.body;
   const { postId }  = req.params;
   
-  await myDataSource.query(
+  await database.query(
     `UPDATE
         posts 
     SET 
@@ -141,7 +136,7 @@ app.patch("/posts/list/:postId", async(req, res, next) => {
     [ postingContent ]
   );
 
-  myDataSource.query(
+  database.query(
     `SELECT
         u.id as "userId", 
         u.name as "userName", 
@@ -153,18 +148,16 @@ app.patch("/posts/list/:postId", async(req, res, next) => {
     WHERE p.id = ${postId}`,
     (error, rows) => {
 
-      res.status(200).json({ "data" : rows });
+      res.status(204).json({ "data" : rows });
     }
-  );
-
-  
+  );  
 });
 
 //delete post
-app.delete("/posts/list/:postId", async(req, res, next) => {
+app.delete("/posts-list/:postId", async(req, res) => {
   const { postId } = req.params;
 
-  await myDataSource.query(
+  await database.query(
     `DELETE
     FROM posts
     WHERE id = ${postId}`,
@@ -174,10 +167,10 @@ app.delete("/posts/list/:postId", async(req, res, next) => {
 });
 
 //tab like button
-app.post("/posts/:postId", async (req, res, next) => {
+app.post("/posts-list/:postId", async (req, res) => {
   const { userId, postId } = req.body;
 
-  await myDataSource.query(
+  await database.query(
     `INSERT INTO likes (
         user_id, 
         post_id
