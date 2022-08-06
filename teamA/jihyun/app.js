@@ -50,16 +50,18 @@ app.post("/signup", async (req, res) => {
 });
 
 //posts
+//userId는 현재 자동으로 들어가지 않기에 test를 위한 임시방편
 app.post("/posts", async (req, res) => {
-  const { title, content } = req.body;
+  const { userId, title, content } = req.body;
 
   await database.query(
     `INSERT INTO posts (
+      user_id,
       title, 
       content
-    ) VALUES (?, ?)`,
+    ) VALUES (?, ?, ?)`,
 
-    [title, content]
+    [ userId, title, content]
   );
 
   res.status(201).json({ message: "postCreated" });
@@ -89,35 +91,24 @@ app.get("/posts-list/users/:userId", (req, res) => {
   const {userId} = req.params;
 
   database.query(
-    `SELECT
-        u.id as "userId",
-        u.name as "userName",
-        p.id as "postingId",
-        p.title as "postingTitle",
-        p.content as "postingContent"
-    FROM users u
-    INNER JOIN posts p ON p.user_id = u.id
-    where u.id = ${userId}
-    order by p.id`,
-    (error, rows) => {
+    `SELECT postslist
+    FROM (
+      SELECT json_object(
+        'id', u.id,
+            'name', u.name,
+            'posting', json_arrayagg(json_object(
+                'title', p.title,
+                'content', p.content)
+                )
+         ) postslist      
+           FROM users u
+           INNER JOIN posts p on u.id = p.user_id
+           WHERE u.id = ${userId}
+           GROUP BY u.id, u.name) sub`,
+   (error, data) => {
 
-      let postings = []
-      let data = {
-          userId: rows[0].userId,
-          userName: rows[0].userName,
-          postings: postings
-      }
-
-      for(let postlist of rows){
-          postings.push({
-              postingId: postlist.postingId,
-              postingTitle: postlist.postingTitle,
-              postingContent: postlist.postingContent
-          });
-      }
-
-      res.status(200).json({ "data" : data });
-    }
+     res.status(200).json({ "data" : JSON.parse(Object.values(data[0])) });
+   }
   );
 });
 
