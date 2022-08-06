@@ -31,11 +31,13 @@ app.use(cors());
 app.use(morgan('tiny'));
 
 app.get("/ping", (req, res)=> {
+    
     res.status(200).json({ "message" :"pong"});
 });
 
 app.post('/users', async (req, res) => {
     const {name, birth, contact, password} = req.body;
+
     await myDataSource.query(
         `INSERT INTO users_table(
             name,
@@ -45,11 +47,13 @@ app.post('/users', async (req, res) => {
         ) VALUES (?, ?, ?, ?); `,
         [name, birth, contact, password]
     );
+    
     res.status(201).json({message: "userCreated"});
 })
 
 app.post('/posts', async (req, res) => {
     const {title, content, user_id, userProfileImage, postingImageUrl} = req.body;
+    
     await myDataSource.query(
         `INSERT INTO posts(
             title,
@@ -73,23 +77,25 @@ app.get('/lists', async (req, res) => {
             userProfileImage,
             postingImageUrl
         FROM posts `,
-        (err, rows) => {res.status(200).json({data:rows})
-})})
+        
+    res.status(200).json({data:rows})
+)})
 
 app.get('/userlists/:id', async(req, res)=>{
     const receiveId =req.params.id;
-    await myDataSource.query(
+    const rows = await myDataSource.query(
         `SELECT 
             p.userProfileImage, 
             p.content As postingContent,
             p.postingImageUrl,
             u.id As userId,
             p.id As postingId,
-            p.title from posts p
-            inner join users_table u on p.user_id = u.id
-            where user_id = ${receiveId}`,
-        (err, rows) => {
-        let data = {
+            p.title 
+        from posts p
+        inner join users_table u on p.user_id = u.id
+        where user_id = ${receiveId}`,)
+       
+         let data = {
             userId: `${receiveId}`,
             userProfileImage: rows[0].userProfileImage,
             posting:[]
@@ -101,22 +107,24 @@ app.get('/userlists/:id', async(req, res)=>{
                 postingContent: rows[i].postingContent
             })
         }
-        res.status(200).json({data : data});
-    })
+       
+    res.status(200).json({data : data});
+    
 })
 
 app.patch('/userPost/:postId', async(req, res) => {
     const postingId = req.params.postId;
     const {title, content} = req.body;
+    
     await myDataSource.query(
         `UPDATE posts
-            SET 
-            title = ?,
+        SET title = ?,
             content = ?
-            WHERE posts.id = ${postingId}
-        `, [title, content]
-        )
-    await myDataSource.query(
+        WHERE posts.id = ${postingId}`, 
+        [title, content]
+        );
+    
+    const patchQuery = await myDataSource.query(
         `SELECT
             posts.user_id AS userId,
             users_table.name AS username,
@@ -126,14 +134,15 @@ app.patch('/userPost/:postId', async(req, res) => {
         FROM users_table
         INNER JOIN posts ON users_table.id = posts.user_id
         WHERE posts.id = ${postingId}
-        `,
-        (err, rows)=>{
-            res.status(201).json({data : rows});
-         })
+        `,)
+        
+    res.status(201).json({data : patchQuery});
+    
 })
 
 app.delete('/postDelete/:Id', async (req, res) => {
     const deletePost = req.params.Id;
+    
     await myDataSource.query(
         `DELETE FROM posts WHERE id = ${deletePost};
         `)
@@ -142,6 +151,7 @@ app.delete('/postDelete/:Id', async (req, res) => {
 
 app.post('/listHeart', async(req, res) => {
     const {user_id, post_id} = req.body
+    
     await myDataSource.query(
 		`INSERT INTO likes(
 			user_id,
