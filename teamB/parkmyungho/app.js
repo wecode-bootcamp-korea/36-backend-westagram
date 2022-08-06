@@ -50,7 +50,7 @@ app.post('/user/signup', async(req,res)=>{
     res.status(201).json({message:"userCreated"})
 })
 //Assingment3 - 게시글 등록 엔드포인트
-app.post('/post/new', async(req,res)=>{
+app.post('/post/new', async (req,res)=>{
     const {title, content, userId} = req.body
 
     await appDataSource.query(
@@ -66,8 +66,9 @@ app.post('/post/new', async(req,res)=>{
 })
 
 //Assignment4 - 전체 게시글 조회 엔드포인트
+//http -v GET 127.0.0.1:3000/users-posts
 app.get('/users-posts', async (req, res)=>{
-    await appDataSource.manager.query(
+    let rows = await appDataSource.query(
         `SELECT
                 users.id UserId,
                 users.profile_image userProfileImage,
@@ -76,65 +77,64 @@ app.get('/users-posts', async (req, res)=>{
                 posts.content posingContent
             FROM users
             Inner Join posts ON users.id=posts.user_id`
-        ,(err, rows) => {
-                res.status(200).json(rows);
-        })
+        )
+    res.status(200).json(rows) 
 })
 
 // assignment5 - 유저 게시글 조회 엔드포인트
+//http -v GET 127.0.0.1:3000/posts/1
 app.get('/posts/:userId', async (req, res) => {
     const userId = req.params.userId;
     const posts =[];
 
-    await appDataSource.query(
+    let userData = await appDataSource.query(
         `SELECT
             u.id userId,
             u.name userName,
             u.profile_image userProfileImage
         FROM users u
-        WHERE u.id = ${userId}`
-        , (err, data) => {
-            const userData = data;
-            appDataSource.query(
-                `SELECT 
-                    p.id postingId,
-                    p.title postingTitle,
-                    p.content postingContent 
-                FROM posts p 
-                INNER JOIN users 
-                ON p.user_id = users.id 
-                WHERE users.id = ${userId}`
-                , (err, datas) => {
-                for (const data of datas) {
-                    posts.push({
-                        postingId : data['postingId'],
-                        postingTitle : data['postingTitle'],
-                        postingContent : data['postingContent'],
-                    })
-                }
-                const user = {
-                    userId : userData[0]['userId'],
-                    userName : userData[0]['userName'],
-                    userProfileImage : userData[0]['userProfileImage'],
-                    post : posts
-                }
-                res.status(200).json({data: user})
-            })
-        });
-})
+        WHERE u.id = ${userId}`)
+    
+    let datas = await appDataSource.query(
+        `SELECT 
+            p.id postingId,
+            p.title postingTitle,
+            p.content postingContent 
+        FROM posts p 
+        INNER JOIN users 
+        ON p.user_id = users.id 
+        WHERE users.id = ${userId}`)
+        
+    for (const data of datas) {
+        posts.push({
+            postingId : data['postingId'],
+            postingTitle : data['postingTitle'],
+            postingContent : data['postingContent'],
+        })
+    }
+    const user = {
+        userId : userData[0]['userId'],
+        userName : userData[0]['userName'],
+        userProfileImage : userData[0]['userProfileImage'],
+        post : posts
+    }
+        res.status(200).json({data: user})
+ })
+         
 
 //Assignment6 - 게시물 수정 엔드포인트
-app.put('/postFix/:userId-:postId', async(req,res) =>{
-    const {userId, postId} = req.params
-    const {content} =req.body
+app.put('/postFix/:userId', async(req,res) =>{
+    const {userId} = req.params
+    const {title, content, postId} =req.body
     await appDataSource.query(
         `UPDATE posts 
-            SET content = ?
-            WHERE posts.id=${postId};`
-            , [content]
+            SET title= ?, 
+            content = ?
+            WHERE posts.id= ?`
+            , [title, content, postId]
     );
 
-    await appDataSource.query(
+   appDataSource.query(
         `SELECT 
             u.id userId,
             u.name userName,
@@ -144,11 +144,10 @@ app.put('/postFix/:userId-:postId', async(req,res) =>{
         FROM users u
         INNER JOIN posts p ON u.id = ${userId}
         WHERE p.id=${postId};`
-        ,(err,rows) => {
-        res.status(206).json({data : rows})
-        }
-    );
-})
+        , (err, rows) => {
+            res.status(200).json({data : rows})
+        });
+});
 
 const server = http.createServer(app)
 const PORT = process.env.PORT;
