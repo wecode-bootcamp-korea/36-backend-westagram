@@ -51,7 +51,6 @@ app.post('/users', async (req, res) => {
       res.status(201).json({ message: 'userCreated'})
 });
 
-
 app.post('/posts', async (req, res) => {
   const { user_id, title, post } = req.body
 
@@ -66,7 +65,6 @@ app.post('/posts', async (req, res) => {
       res.status(201).json({ message: 'postCreated'})
 })
 
-
 app.get('/posts/view-all', async (req, res) => {
   await myDataSource.manager.query(
     `SELECT 
@@ -76,9 +74,7 @@ app.get('/posts/view-all', async (req, res) => {
        FROM posts`,
     (err, rows) => {
       res.status(200).json(rows)
-    }
-  ) 
-
+    }) 
 })
 
 
@@ -86,31 +82,21 @@ app.get('/posts/:id', async (req, res) => {
   const { id } = req.params;
 
   await myDataSource.query(
-    `SELECT
-      users.id AS name,
-      posts.no AS no,
-      title AS posting FROM posts
-      INNER JOIN users
-      ON users.no = posts.user_id WHERE users.no = ${id}
-
-    `, (err, rows) => {
-
-      posting = [];
-
-      data = {
-        userName : rows[0].name,
-        userId : `${id}`,
-        posting
-      }
-
-      for(let i in rows) {
-        posting.push({
-          no : rows[i].no,
-          posting : rows[i].posting
-        }) 
-      }
-      res.status(200).json( data );
-    })
+    `
+    SELECT users.id as id, users.no as no, 
+    ((SELECT JSON_ARRAYAGG(
+    JSON_OBJECT('no', no, 'title', title, 'post', post )) 
+    FROM posts WHERE posts.user_id=${ id })) 
+    AS post FROM users 
+    WHERE users.no=${ id }
+    
+    `, (err, rows) => { 
+      let post = rows[0].post
+      let postObj = JSON.parse(post)
+      res.status(200).json( { user_name : rows[0].id, user_no : rows[0].no , posting : postObj} )
+    }     
+    )
+    
 });
 
 app.patch('/posts', async(req, res) => {
@@ -150,17 +136,19 @@ app.delete('/post/:no', async(req, res) => {
   res.status(204).json({ message: 'postingDeleted' })
 });
 
-app.patch('/like/:post_no', async(req, res) => {
-  const { post_no } = req.params;
+app.post('/likes/user/:user_id/post/:post_id/', async(req, res) => {
+  const { user_id, post_id } = req.params;
 
   await myDataSource.query(
-    `UPDATE posts SET likes = likes + 1 WHERE posts.no = ${post_no}`,
+    `INSERT INTO likes (
+      user_id, 
+      post_id
+    ) VALUES (?, ?)`,
 
+  [user_id, post_id]
+  );
       res.status(200).json({ message : "likeCreated"})
-
-  )
-
-})
+});
 
 
 const server = http.createServer(app);
