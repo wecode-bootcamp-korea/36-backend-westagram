@@ -45,7 +45,7 @@ app.post ("/signup", async (req, res) => {
          [name, email, password]
     );
 
-    res.status(201).json({ message : "userCreated" });
+    res.status(201).json({ "message" : "userCreated" });
 });
 
 app.post ("/posting", async (req, res) => {
@@ -60,24 +60,33 @@ app.post ("/posting", async (req, res) => {
         [title, content, userId]
     );
 
-    res.status(201).json({ message : "postCreated" });
+    res.status(201).json({ "message" : "postCreated" });
 });
 
 app.get("/posting", async (req, res) => {
-    const posts = await myDataSource.query(`
-    SELECT
-        users.id userId,
-        posts.id postingId,
-        posts.title postingTitle,
-        posts.content postingContent 
-    FROM users
-    INNER JOIN posts
-    on users.id = posts.user_id;`)
+    const posts = await myDataSource.query(
+        `SELECT
+            users.id userId,
+            posts.id postingId,
+            posts.title postingTitle,
+            posts.content postingContent 
+        FROM users
+        INNER JOIN posts
+        on users.id = posts.user_id;`
+        );
 
-    res.status(200).json( {data :posts} );
+    res.status(200).json({ data : posts });
 });
 
-// app.post ("/like")
+app.delete("/posting/:postingId", async (req, res) => {
+    const { postingId } = req.params;
+
+    await myDataSource.query(
+        `DELETE FROM posts
+         WHERE posts.id = ${postingId}`
+    );
+    res.status(200).json({ "message" : "postingDeleted" });
+});
 
 
 
