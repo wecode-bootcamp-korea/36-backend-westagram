@@ -83,36 +83,21 @@ app.get("/posts", async (req, res) => {
 app.get("/posts/:userId", async (req, res) => {
     const { userId } = req.params;
 
-    await myDataSource.query(
-        `SELECT
-            u.id AS userId,
-            u.name AS userName,
-            u.profile_Image AS userProfileImage,
-            p.id AS postingId,
-            p.title AS postingTitle,
-            p.content AS postingContent
-        FROM users AS u
-        INNER JOIN posts AS p ON u.id = p.user_id
-        WHERE u.id = ${userId}
-        `,
-        (err, rows) => {
-            let postings = [];
-            let result = {
-                userId: rows[0].userId,
-                userName: rows[0].userName,
-                userProfileImage: rows[0].userProfileImage,
-                postings,
-            };
-            for (let i in rows) {
-                postings.push({
-                    postingId: rows[i].postingId,
-                    postingTitle: rows[i].postingTitle,
-                    postingContent: rows[i].postingContent,
-                });
-            }
-        res.status(200).json({ data: result });
-        }
+    const result = await myDataSource.query(
+        `SELECT 
+        u.id userId,
+        u.name userName,
+        'posting', JSON_ARRAYAGG(
+                JSON_OBJECT(
+                    'title', p.title, 
+                    'content', p.content)
+                ) posting FROM users u
+            INNER JOIN posts p ON u.id = p.user_id
+            WHERE u.id = ${userId}
+            GROUP BY u.id, u.name
+        `,  
     );
+    res.status(200).json({ 'data': result })
 });
 
 app.patch("/posts/:userId/:postId", async (req, res) => {
