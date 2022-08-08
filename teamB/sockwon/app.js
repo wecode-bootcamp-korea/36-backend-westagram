@@ -1,6 +1,6 @@
 
 const dotenv = require("dotenv");
-dotenv.config() //환경변수의 조정. 아래에 있었다면 에러가 났을 것이다. 위치에 신경써야.
+dotenv.config() 
 const http = require("http");
 const express = require("express");
 const cors = require("cors");
@@ -85,7 +85,7 @@ app.patch("/post", (req, res)=>{
         SET title="${title}", 
             content="${content}" 
         WHERE id=${id};
-        ` //update 는 SET title="${title}", content="${content}" 처럼 따옴표를 꼭 넣어줘야 한다.
+        ` 
         );
         res.status(201).json({MESSAGE : 'success!'})
 })
