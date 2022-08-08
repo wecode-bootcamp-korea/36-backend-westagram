@@ -23,12 +23,6 @@ const userPost = async( userId ) => {
 
 const updatePost = async ( userId, postId, title, content ) => {
     
-    if( !postId ){
-        const err = new Error('PASSWORD_IS_NOT_VALID');
-        err.statusCode = 409;
-        throw err;
-    }
-    
     const patchPost = await postDao.patchPost(
         userId,
         postId,
