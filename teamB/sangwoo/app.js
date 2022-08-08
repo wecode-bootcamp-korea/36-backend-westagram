@@ -14,7 +14,7 @@ const myDataSource = new DataSource({
     port: process.env.TYPEORM_PORT,
     username: process.env.TYPEORM_USERNAME,
     password: process.env.TYPEORM_PASSWORD,
-    database: process.env.TYPEORM_DATABASE
+    database: process.env.TYPEORM_DATABASE,
 });
 
 myDataSource.initialize()
@@ -32,9 +32,9 @@ app.get("/ping", (reg, res) => {
     res.status(201).json({ message: "pong" });
 });
 
-app.post("/user/signup", async (req, res) => {
+app.post("/user/sign-up", async (req, res) => {
     const { name, email, password, profile_image } = req.body;
-
+    
     await myDataSource.query(
         ` 
         INSERT INTO users(
@@ -47,6 +47,111 @@ app.post("/user/signup", async (req, res) => {
         [name, email, password, profile_image]
     );
     res.status(201).json({ message: "userCreated" });
+});
+
+app.post("/posts", async (req, res) => {
+    const { title, content, user_id } = req.body;
+
+    await myDataSource.query(
+        ` 
+        INSERT INTO posts(
+            title,
+            content,
+            user_id
+        ) VALUES (?,?,?);
+        `,
+        [title, content, user_id]
+    );
+    res.status(201).json({ message: "postCreated" });
+});
+
+app.get("/posts", async (req, res) => {
+    const postView = await myDataSource.query(
+        `SELECT 
+            u.id AS userId,
+            u.profile_Image AS userProfileImage,
+            p.id AS postingId,
+            p.title AS postingTitle,
+            p.content AS postingContent
+        FROM users AS u
+        INNER JOIN posts AS p ON u.id = p.user_id
+        `,
+    );
+        res.status(200).json({ data: postView });
+});
+
+app.get("/posts/:userId", async (req, res) => {
+    const { userId } = req.params;
+
+    const result = await myDataSource.query(
+        `SELECT 
+        u.id userId,
+        u.name userName,
+        'posting', JSON_ARRAYAGG(
+                JSON_OBJECT(
+                    'title', p.title, 
+                    'content', p.content)
+                ) posting FROM users u
+            INNER JOIN posts p ON u.id = p.user_id
+            WHERE u.id = ${userId}
+            GROUP BY u.id, u.name
+        `,  
+    );
+    res.status(200).json({ 'data': result })
+});
+
+app.patch("/posts/:userId/:postId", async (req, res) => {
+    const { userId, postId } = req.params;
+    const { title, content } = req.body;
+    
+    await myDataSource.query(
+        `UPDATE posts
+        SET
+            title = ?,
+            content = ?
+        WHERE posts.id = ${postId}
+        `,
+        [title, content]
+    );
+    const userPostPatch = await myDataSource.query(
+        `SELECT 
+            u.id AS userId,
+            u.name AS userName,
+            p.id AS postingId,
+            p.title AS postingTitle,
+            p.content AS postingContent
+        FROM users AS u
+        INNER JOIN posts AS p ON u.id = p.user_id
+        WHERE u.id = ${userId} AND p.id = ${postId}
+            `,
+    );
+    res.status(201).json({ data: userPostPatch })
+});
+
+app.delete("/posts/:postId", async (req, res) => {
+    const { postId } = req.params;
+
+    await myDataSource.query(
+        `DELETE FROM posts
+        WHERE posts.id = ${postId}`
+    );
+    res.status(200).json({ message: "postingDeleted" });
+});
+
+app.post("/posts/like/:postId", async (req, res) => {
+    const { postId } = req.params;
+    const { user_id } = req.body;
+
+    await myDataSource.query(
+        `
+        INSERT INTO likes(
+            user_id,
+            post_id
+        ) VALUES(?, ${postId})
+        `,
+        [user_id]
+    );
+    res.status(200).json({ message: "likeCreated" });
 });
 
 const server = http.createServer(app);
