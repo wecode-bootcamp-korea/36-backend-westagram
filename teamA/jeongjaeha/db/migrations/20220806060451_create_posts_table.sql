@@ -1,0 +1,15 @@
+-- migrate:up
+CREATE TABLE posts (
+  no INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  user_id INT NOT NULL,
+  title VARCHAR(300) NOT NULL,
+  post VARCHAR(2000) ,
+  likes INT NOT NULL DEFAULT '0',
+  post_created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  post_updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT posts_user_id_fk FOREIGN KEY (user_id) REFERENCES users(no)
+) 
+
+-- migrate:down
+DROP TABLE posts;
+
