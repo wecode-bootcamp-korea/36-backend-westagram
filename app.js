@@ -97,7 +97,7 @@ app.get('/posts/:user_id', async (req, res) => {
   });
 });
 
-app.put('/posts', async (req, res, next) => {
+app.put('/posts', async (req, res) => {
   const {title, content, postId, userId} = req.body;
 
   await myDataSource.query(
@@ -110,12 +110,8 @@ app.put('/posts', async (req, res, next) => {
         `,
         [title, content, postId, userId]
       );
-  next()
-}, (req, res) => {
- const postId = parseInt(req.body.postId);
- const userId = parseInt(req.body.userId);
 
-  const data = myDataSource.query(
+  const data = await myDataSource.query(
                  `SELECT
                    p.title,
                    p.content,
@@ -126,9 +122,9 @@ app.put('/posts', async (req, res, next) => {
                  INNER JOIN users u
                  ON p.user_id=u.id
                  WHERE p.user_id=${userId} AND p.id=${postId}
-    `);
+  `);
 
-     res.status(200).json(rows);
+  res.status(200).json(data);
 });
 
 app.delete('/posts/:postId', async (req,res) => {

@@ -1,4 +1,9 @@
 .env
 node_modules/
 db/schema.sql
+models/
+controllers/
+routes/
+services/
+.vscode/
 
