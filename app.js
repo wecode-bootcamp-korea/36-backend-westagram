@@ -66,7 +66,7 @@ app.post('/posts', async (req, res) => {
 app.get('/posts', async (req, res) => {
   await myDataSource.query(
     `SELECT
-      p.post_id,
+      p.id,
       p.title,
       p.content,
       p.user_id,
@@ -82,7 +82,7 @@ app.get('/posts/:user_id', async (req, res) => {
 
   await myDataSource.query(
     `SELECT
-      p.post_id,
+      p.id,
       p.title,
       p.content,
       p.created_at,
@@ -105,7 +105,7 @@ app.put('/posts', async (req, res, next) => {
         SET
           title = ?,
           content = ?
-        WHERE post_id = ?
+        WHERE id = ?
         AND user_id = ?
         `,
         [title, content, postId, userId]
@@ -120,12 +120,12 @@ app.put('/posts', async (req, res, next) => {
                    p.title,
                    p.content,
                    p.user_id,
-                   p.post_id,
+                   p.id,
                    u.name
                  FROM posts p
                  INNER JOIN users u
                  ON p.user_id=u.id
-                 WHERE p.user_id=${userId} AND p.post_id=${postId}
+                 WHERE p.user_id=${userId} AND p.id=${postId}
     `);
 
      res.status(200).json(rows);
@@ -136,7 +136,7 @@ app.delete('/posts/:postId', async (req,res) => {
 
   await myDataSource.query(
     `DELETE FROM posts
-    WHERE posts.post_id=${postId}`
+    WHERE posts.id=${postId}`
   );
 
   res.status(200).json({message: "postingDeleted"});
