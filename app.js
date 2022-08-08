@@ -149,7 +149,7 @@ app.post('/like', async (req, res) => {
     `, 
     [userId, postId]);
 
-  res.status(202).json({message: 'likeCreated'});
+  res.status(201).json({message: 'likeCreated'});
 });
 
 const start = async () => {
