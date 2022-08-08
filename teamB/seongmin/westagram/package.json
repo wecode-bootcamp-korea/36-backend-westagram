@@ -1,7 +1,6 @@
 {
   "name": "westagram",
   "version": "1.0.0",
-  "description": "",
   "main": "app.js",
   "scripts": {
     "start": "nodemon app.js",
@@ -21,5 +20,6 @@
   },
   "devDependencies": {
     "nodemon": "^2.0.19"
-  }
+  },
+  "description": ""
 }
