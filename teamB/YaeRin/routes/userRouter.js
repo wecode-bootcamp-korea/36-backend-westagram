@@ -9,3 +9,4 @@ router.get("/:userId/posts", userController.usersPostsCtrl);
 module.exports = {
   router,
 };
+
