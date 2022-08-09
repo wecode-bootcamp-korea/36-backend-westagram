@@ -1,3 +1,3 @@
 -- migrate:up
-ALTER TABLE likes ADD UNIQUE INDEX (user_id, post_id)
+ALTER TABLE likes ADD UNIQUE CONSTRAINT (user_id, post_id)
 -- migrate:down
