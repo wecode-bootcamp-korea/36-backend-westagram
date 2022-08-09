@@ -1,5 +1,11 @@
 const { dataSource } = require('./daoUtil');
 
+const errorHandler = () => {
+    const error = new Error('INVALID_DATA_INOUT');
+    error.statusCode = 500;
+    throw error;
+}
+
 const createUser = async ( name, email, password, profileImage) => {
     try{
         return await dataSource.query(
@@ -12,9 +18,7 @@ const createUser = async ( name, email, password, profileImage) => {
             [name, email, password, profileImage]
         );
     } catch (err) {
-        const error = new Error('INVALID_DATA_INOUT');
-        error.statusCode = 500;
-        throw error;
+        errorHandler();
     }
 }
 
@@ -30,13 +34,25 @@ const search = async () => {
         FROM users u 
         `);
     } catch (err) {
-        const error = new Error('INVALID_DATA_INOUT');
-        error.statusCode = 500;
-        throw error;
+        errorHandler();
+    }
+}
+
+const userCheck = async (userId) => {
+    try {
+        return await dataSource.query(`
+        SELECT EXISTS
+        (SELECT id FROM users
+        WHERE id = ${userId});
+        `
+        )
+    } catch (err) {
+        errorHandler();
     }
 }
 
 module.exports = {
     createUser,
-    search
+    search,
+    userCheck
 }
