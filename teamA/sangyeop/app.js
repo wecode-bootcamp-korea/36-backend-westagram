@@ -145,7 +145,7 @@ app.delete("/delete/posts/:postingId", async (req, res) => {
       `DELETE FROM posts
       WHERE posts.id = ${postingId}`
   );
-  res.status(200).json({ message: "postingDeleted" });
+  res.status(200).json({ message: "postingDeleted " });
 }); 
  
 
