@@ -49,11 +49,28 @@ app.post('/userId', async (req, res, next) => {
       res.status(200).json({ message : "userCreated"});
 });
 
+
+app.get('/get/userId', async (req, res, next) => {
+  await myDataSource.query(
+      `SELECT
+          name,
+          email,
+          profile_Image,
+          password
+          FROM userId;`
+          ,(err, rows) =>{
+
+      res.status(200).json(rows);
+    });
+  });
+  
+
+
 //게시글posts
 app.post('/posts', async (req, res, next) => {
   const { userId, userProfileImage, postingId, postingImageUrl, postingContent} = req.body;
 
-  await myDataSource.query(
+  await myDataSource.query (
       `INSERT INTO posts(
           userId,
           userProfileImage,
@@ -66,6 +83,77 @@ app.post('/posts', async (req, res, next) => {
 
       res.status(201).json({ message : "postCreated"});
 });
+
+//전체게시글 조회
+app.get('/get/posts', async(req, res, next) => {
+  await myDataSource.query(
+  `SELECT 
+    userId,
+    userProfileImage,
+    postingId,
+    postingImageUrl,
+    postingContent
+    FROM posts`
+  ,(err, rows) => {
+    res.status(200).json(rows);
+});
+});
+
+//유저게시글 조회 - 진행중
+app.get('/get/posts/:userId', async (req, res) => {
+  const { userId } = req.params;
+  const data = await myDataSource.query(
+      `SELECT
+              p.id as postingId,
+              p.postingId,
+              p.postingContent,
+              p.userId
+      FROM posts p
+      WHERE p.userId = ${userId}
+      `);
+  let obj = {
+      "1.userId": `${userId}`,
+      "2.name": parseInt(
+         await myDataSource.query(`select u.name from userId u`)) //쿼리문 삽입으로해결 방안 찾기
+      // userProfileImage: parseInt(profile_Image)
+  };
+  obj["postings"] = data;
+  res.status(200).json({ "data": obj })
+
+});
+
+//게시글 수정
+app.patch('/patch/posts/:id', function(req, res){
+  const id = req.params.id
+  const content = req.body.content
+  myDataSource.query(`
+      UPDATE posts 
+          SET ? WHERE id = ${id}`, 
+          {postingContent :content}
+      )
+
+  res.status(201).json({message: "UpdatedSuccess"});
+})
+
+
+
+//게시글 삭제
+app.delete("/delete/posts/:postingId", async (req, res) => {
+  const { postingId } = req.params;
+
+  await myDataSource.query(
+      `DELETE FROM posts
+      WHERE posts.id = ${postingId}`
+  );
+  res.status(200).json({ message: "postingDeleted" });
+}); 
+ 
+
+
+//좋아요
+
+
+
 
 const server = http.createServer(app);
 const PORT = process.env.PORT;
