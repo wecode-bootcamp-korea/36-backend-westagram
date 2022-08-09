@@ -15,7 +15,7 @@ app.use(express.json());
 app.use(routes);
 
 app.get("/ping", (req, res) => {
-  res.json({ message: "pong!" });
+  res.status(200).json({ message: "pong" });
 });
 
 const server = http.createServer(app);
@@ -31,4 +31,4 @@ const serverListening = async () => {
   }
 };
 
-serverListening();
+server.listen(PORT, serverListening);

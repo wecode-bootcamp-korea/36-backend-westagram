@@ -35,53 +35,121 @@ app.get("/ping", (req, res) => {
     res.status(200).json({"message" : "pong"});
 });
 
-app.post('/users', async (req, res, next) => {
+app.post('/users', async (req, res) => {
     const { name, email, profileImage } = req.body;
 
-    await myDataSource.query(
-        `INSERT INTO users(
+    await myDataSource.query(`
+        INSERT INTO users(
             name,
             email,
             profile_image
-        ) VALUES (?, ?, ?);
-        `,
-        [name, email, profileImage]);
+        ) VALUES (?, ?, ?)`,
+        [name, email, profileImage]
+    );
 
-        res.status(201).json({ message : "userCreated"});
+    res.status(201).json({ message : "userCreated"});
 });
 
-app.post('/posts', async(req, res, next) => {
+app.post('/posts', async (req, res) => {
     const { title, content, postImage, userId} = req.body;
 
-    await myDataSource.query(
-        `INSERT INTO posts(
+    await myDataSource.query(`
+        INSERT INTO posts(
             title,
             content,
             post_image,
             user_id
-        ) VALUES (?, ?, ?, ?);
-        `,
+        ) VALUES (?, ?, ?, ?)`,
         [title, content, postImage, userId]
     );
 
     res.status(201).json({ message : "postCreated"});
 });
 
-app.get('/posts', async(req, res, next) => {
-    await myDataSource.manager.query(
-        `SELECT
-                posts.user_id AS userId,
-                users.profile_image AS userProfileImage,
-                posts.id AS postingId,
-                posts.post_image AS postingImageUrl,
-                posts.content AS postingContent
-            FROM posts
-            INNER JOIN users ON posts.user_id = users.id`
-        ,(err, data) => {
-            res.status(200).json({data});
-        });
+app.get('/posts', async (req, res) => {
+    const postList = await myDataSource.manager.query(`
+        SELECT
+            posts.user_id AS userId,
+            users.profile_image AS userProfileImage,
+            posts.id AS postingId,
+            posts.post_image AS postingImageUrl,
+            posts.content AS postingContent
+        FROM posts
+        INNER JOIN users ON posts.user_id = users.id`
+    );
+    
+    res.status(200).json({data : postList});
 });
 
+app.get('/users/post/:userId', async (req, res) => {
+    const { userId } = req.params;
+    const getUserPost = await myDataSource.manager.query(`
+        SELECT
+            posts.id AS postingId,
+            posts.post_image AS postingImageUrl,
+            posts.content AS postingContent
+        FROM posts
+        WHERE posts.user_id = ${userId}`
+    );
+
+    const posts = {
+        userId : userId,
+        posting : getUserPost
+    }
+    res.status(200).json({data : posts})
+});
+
+app.patch('/users/:postId', async (req, res) => {
+    const { title, content, postImage} = req.body;
+    const {postId}  = req.params;
+
+    await myDataSource.query(`
+        UPDATE posts
+        SET title = ?,
+            content = ?,
+            post_image = ?
+        WHERE posts.id = ${postId}`,
+        [title, content, postImage]
+    );
+
+    const getUpdatedUserInfo = await myDataSource.manager.query(`
+            SELECT
+                posts.user_id AS userId,
+                users.name AS userName,
+                posts.id AS postingId,
+                posts.title AS postingTitle,
+                posts.content AS postingContent
+            FROM posts
+            INNER JOIN users ON (posts.user_id = users.id AND posts.id = ${postId})`,
+    );
+    
+    res.status(200).json({data : getUpdatedUserInfo})
+});
+
+app.delete('/posts/:postId', async (req, res,) => {
+    const {postId} = req.params;
+
+    await myDataSource.query(`
+        DELETE FROM posts
+        WHERE posts.id = ${postId}`
+        );
+
+    res.status(200).json({ message : "postingDeleted" });
+});
+
+app.post('/posts/likes', async (req, res) => {
+    const { postId, userId } = req.body;
+
+    await myDataSource.query(`
+        INSERT INTO likes(
+            post_id,
+            user_id
+        ) VALUES (?, ?)`,
+        [postId, userId]
+    );
+
+    res.status(201).json({ message : "likeCreated"});
+});
 
 
 const start = async () => {
