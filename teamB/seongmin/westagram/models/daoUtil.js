@@ -18,6 +18,5 @@ const initialization = dataSource.initialize()
     });
 
 module.exports = {
-    dataSource,
-    initialization
+    dataSource
 }

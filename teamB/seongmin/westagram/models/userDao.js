@@ -1,6 +1,4 @@
-const { dataSource, intialization } = require('../util/daoUtil');
-
-intialization;
+const { dataSource } = require('./daoUtil');
 
 const createUser = async ( name, email, password, profileImage) => {
     try{

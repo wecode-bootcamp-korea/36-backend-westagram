@@ -1,6 +1,5 @@
-const {dataSource, initialization } = require('../util/daoUtil');
+const { dataSource } = require('./daoUtil');
 
-initialization;
 
 const insertPost = async (title, content, user_id) => {
     try {
@@ -35,8 +34,6 @@ const searchPosts = async () => {
 
 const searchUserPost = async (userId) => {
     try {
-
-        
         return await dataSource.query(
         `select result
         FROM (SELECT json_object(

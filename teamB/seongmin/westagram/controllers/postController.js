@@ -10,7 +10,7 @@ const createPost = async (req, res) => {
         const { title, content, user_id } = req.body;
 
         if (!title || !content || !user_id) {
-            return res.status(404).json({message : "KEY_ERROR"});
+            return res.status(400).json({message : "KEY_ERROR"});
         }
 
         await postService.createPost( title, content, user_id);
