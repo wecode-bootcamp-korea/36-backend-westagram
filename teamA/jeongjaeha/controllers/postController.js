@@ -33,7 +33,7 @@ const getPostUser = async (req, res) => {
   const { id } = req.params;
   try {
     const postUser = await postServices.postUser(id);
-      res.status(200).json({ postUser });
+      res.status(200).json( {"userData" : JSON.parse(Object.values(postUser[0])) });
     }
      catch (err) {
       console.log(err);
@@ -53,11 +53,11 @@ const deletePost = async ( req, res ) => {
   } 
 };
 
-const updatePost = async ( req, res ) => {
-  const { no, id } = req.params;
-  const { post } = req.body;
+const postUpdate = async ( req, res ) => {
+  const { no } = req.params;
+  const { title, post } = req.body;
   try {
-    const updatePost = await postServices.updatePost( no, id, post );
+    const postUpdate = await postServices.postUpdate( no, title, post );
       res.status(200).json({ message: "UPDATE No." + `${no}` + " POST" });
     }
      catch (err) {
@@ -66,11 +66,12 @@ const updatePost = async ( req, res ) => {
   } 
 };
 
-const likePost = async ( req, res ) => {
+const postLike = async ( req, res ) => {
   const { no, id } = req.params;
+  const { title, post } = req.body 
   try {
-    const likePost = await postServices.likePost( no, id );
-      res.status(200).json({ message: "LIKED No." + `${no}` + " POST" });
+    const postLike = await postServices.postLike( no, id, title, post );
+      res.status(200).json({ message: "User" + `${id}` +" LIKED No." + `${no}` + " POST" });
     }
      catch (err) {
       console.log(err);
@@ -84,6 +85,6 @@ module.exports = {
   getPostAll,
   getPostUser,
   deletePost,
-  updatePost,
-  likePost
+  postUpdate,
+  postLike
 }

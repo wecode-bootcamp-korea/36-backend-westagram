@@ -1,9 +1,9 @@
 const postDao = require('../models/postDao')
-const viewAllDao = require('../models/viewAllDao')
-const viewUserDao = require('../models/viewUserDao')
-const postDeleteDao = require('../models/postDeleteDao')
-const postUpdateDao = require('../models/postUpdateDao')
-const postLikeDao = require('../models/postLikeDao')
+const viewAllDao = require('../models/postDao')
+const viewUserDao = require('../models/postDao')
+const postDeleteDao = require('../models/postDao')
+const postUpdateDao = require('../models/postDao')
+const postLikeDao = require('../models/postDao')
 
 const posting = async (user_id, title, post) => {
   const posting = await postDao.posting(
@@ -15,7 +15,7 @@ const posting = async (user_id, title, post) => {
 };
 
 const postAll = async () => {
-  const posting = await viewallDao.posting();
+  const posting = await viewAllDao.viewAll();
     return posting;
 };
   
@@ -29,14 +29,14 @@ const postDelete = async ( no, id ) => {
     return postDelete
 };
   
-const updatePost = async ( no, id, post ) => {
-  const updatePost = await postUpdateDao.updatePost( no, id, post );
-    return updatePost
+const postUpdate = async ( no, title, post ) => {
+  const postUpdate = await postUpdateDao.postUpdate( no, title, post );
+    return postUpdate
 };
   
-const likePost = async ( no, id ) => {
-  const likePost = await postLikeDao.likePost( no, id );
-    return likePost;
+const postLike = async ( no, id ) => {
+  const postLike = await postLikeDao.postLike( no, id );
+    return postLike;
 };
 
   
@@ -45,6 +45,6 @@ module.exports = {
     postAll,
     postUser,
     postDelete,
-    updatePost,
-    likePost
+    postUpdate,
+    postLike
 }
