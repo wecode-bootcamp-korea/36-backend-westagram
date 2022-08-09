@@ -37,10 +37,6 @@ const posting = async (req, res) => {
   } 
 };
 
-  
- 
-
-
 module.exports = {
 	signUp,
   posting

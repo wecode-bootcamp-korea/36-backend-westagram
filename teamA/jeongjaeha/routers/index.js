@@ -5,7 +5,6 @@ const router = express.Router();
 
 const userRouter = require("./userRouter");
 const postRouter = require("./postRouter");
-// const postViewRouter = require("./postViewRouter");
 
 
 router.use("/users", userRouter.router);

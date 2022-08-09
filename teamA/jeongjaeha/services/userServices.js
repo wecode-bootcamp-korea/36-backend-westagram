@@ -1,7 +1,6 @@
 const userDao = require('../models/userDao')
 
 const signUp = async (user_id, password, name, age) => {
-    // password validation using REGEX
     const pwValidation = new RegExp(
       '[a-zA-Z0-9]'
     );

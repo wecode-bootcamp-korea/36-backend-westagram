@@ -122,8 +122,4 @@ module.exports = {
 	postUpdate,
 	viewUser,
 	viewAll
-
-
-
-
 }
