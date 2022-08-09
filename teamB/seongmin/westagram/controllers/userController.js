@@ -1,5 +1,9 @@
 const userService = require('../services/userService');
 
+const errorhandler = (err,res) => {
+    return res.status(err.statusCode || 500).json({message : err.message});
+}
+
 const signUp = async (req, res) => {
     try {
         const { name, email, profile_image, password } = req.body;
@@ -13,7 +17,7 @@ const signUp = async (req, res) => {
             message : "SIGNUP_SUCCESS"
         });
     } catch (err) {
-        return res.status(err.statusCode || 500).json({message : err.message});
+        errorhandler(err, res);
     }
 }
 
@@ -22,7 +26,7 @@ const search = async (req, res) => {
         const result = await userService.search();
         return res.status(200).json({data : result});
     } catch (err) {
-        return res.status(err.statusCode || 500).json({message : err.message});
+        errorhandler(err, res);
     }
 }
 

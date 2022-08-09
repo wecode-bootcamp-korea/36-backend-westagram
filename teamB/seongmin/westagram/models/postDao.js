@@ -1,5 +1,10 @@
 const { dataSource } = require('./daoUtil');
 
+const errorHandler = () => {
+    const error = new Error('INVALID_DATA_INOUT');
+    error.statusCode = 500;
+    throw error;
+}
 
 const insertPost = async (title, content, user_id) => {
     try {
@@ -8,9 +13,7 @@ const insertPost = async (title, content, user_id) => {
                 title, content, user_id
             ) VALUES (?, ?, ?);`, [title, content, user_id]);
     } catch (err) {
-        const error = new Error('INVALID_DATA_INOUT');
-        error.statusCode = 500;
-        throw error;
+        errorHandler();
     }
 }
 
@@ -26,16 +29,14 @@ const searchPosts = async () => {
     INNER JOIN posts p
     on u.id = p.user_id;`)
     } catch (err) {
-        const error = new Error('INVALID_DATA_INOUT');
-        error.statusCode = 500;
-        throw error;
+        errorHandler();
     }
 }
 
 const searchUserPost = async (userId) => {
     try {
         return await dataSource.query(
-        `select result
+            `select result
         FROM (SELECT json_object(
             'id', u.id,
             'name', u.name,
@@ -48,9 +49,7 @@ const searchUserPost = async (userId) => {
         WHERE u.id = ${userId}) temp;`
         )
     } catch (err) {
-        const error = new Error('INVALID_DATA_INOUT');
-        error.statusCode = 500;
-        throw error;
+        errorHandler();
     }
 }
 
@@ -76,9 +75,7 @@ const patchPost = async (postId, postingTitle, postingContent) => {
         return data;
 
     } catch (err) {
-        const error = new Error('INVALID_DATA_INOUT');
-        error.statusCode = 500;
-        throw error;
+        errorHandler();
     }
 }
 
@@ -88,9 +85,20 @@ const deletePost = async (postId) => {
     DELETE FROM posts WHERE id = ${postId};
     `)
     } catch (err) {
-        const error = new Error('INVALID_DATA_INOUT');
-        error.statusCode = 500;
-        throw error;
+        errorHandler();
+    }
+}
+
+const postCheck = async (postId) => {
+    try {
+        return await dataSource.query(`
+        SELECT EXISTS
+        (SELECT id FROM posts
+        WHERE id = ${postId});
+        `
+        )
+    } catch (err) {
+        errorHandler();
     }
 }
 
@@ -99,5 +107,6 @@ module.exports = {
     searchPosts,
     searchUserPost,
     patchPost,
-    deletePost
+    deletePost,
+    postCheck
 }
