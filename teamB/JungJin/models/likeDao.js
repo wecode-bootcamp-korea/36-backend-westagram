@@ -15,21 +15,7 @@ const lookupLike = () => {
 };
 
 const makeheart = async (user_id, post_id) => {
-    const usersql = await database.query(`
-                        SELECT EXISTS(
-                            SELECT 
-                                id 
-                            from users 
-                            WHERE users.id=${user_id}
-                            ) AS RESULT`)
-    const postsql = await database.query(`
-                        SELECT EXISTS(
-                            SELECT 
-                                id 
-                            from posts 
-                            WHERE posts.id=${post_id}
-                            ) AS RESULT`)
-    const allsql = await database.query(`
+    const sql = await database.query(`
                             SELECT EXISTS(
                                 SELECT 
                                     user_id,
@@ -38,13 +24,7 @@ const makeheart = async (user_id, post_id) => {
                                 WHERE user_id=${user_id} AND
                                     post_id=${post_id}
                                 ) AS RESULT`)
-    if(Number(Object.values(usersql[0])[0]) === 0 || 
-        Number(Object.values(postsql[0])[0]) === 0){
-        const err = new Error('no user.id OR posts.id')
-        err.statusCode = 400
-        throw err;
-    }
-    if(Number(Object.values(allsql[0])[0]) === 1){
+    if(Number(Object.values(sql[0])[0]) === 1){
         const err = new Error('already exists heart')
         err.statusCode = 400
         throw err;
