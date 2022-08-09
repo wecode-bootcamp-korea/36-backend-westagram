@@ -9,7 +9,7 @@ const myDataSource = new DataSource({
     database: process.env.TYPEORM_DATABASE,
   });
   
- const initialize = myDataSource
+myDataSource
     .initialize()
     .then(() => {
       console.log("DataSource has been initialized!");
@@ -21,6 +21,5 @@ const myDataSource = new DataSource({
 
     module.exports = {
         myDataSource,
-        initialize,
     }
     

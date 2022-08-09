@@ -31,4 +31,4 @@ const serverListening = async () => {
   }
 };
 
-server.listen(PORT, serverListening);
+serverListening();

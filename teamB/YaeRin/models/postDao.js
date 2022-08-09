@@ -1,4 +1,4 @@
-const { myDataSource, initialize } = require("./dataSource.js");
+const { myDataSource } = require("./dataSource.js");
 
 const createPost = async (title, content, userId) => {
   try {

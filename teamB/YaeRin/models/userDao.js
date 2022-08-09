@@ -1,4 +1,4 @@
-const { myDataSource, initialize } = require("./dataSource.js");
+const { myDataSource } = require("./dataSource.js");
 
 const createUser = async (name, email, password, profileImage) => {
   try {

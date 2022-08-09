@@ -17,11 +17,11 @@ const signUp = async (req, res) => {
   }
 };
 
-const usersPostsCtrl = async (req, res) => {
+const userPostList = async (req, res) => {
   try {
     const { name, title, content } = req.body;
     const { userId } = req.params;
-    const resultUsersPosts = await userService.usersPostsCtrl(
+    const resultUsersPosts = await userService.userPostList(
       userId,
       name,
       title,
@@ -51,6 +51,6 @@ const usersPostsCtrl = async (req, res) => {
 
 module.exports = {
   signUp,
-  usersPostsCtrl,
+  userPostList,
 };
 

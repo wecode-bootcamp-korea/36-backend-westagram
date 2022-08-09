@@ -1,6 +1,6 @@
 const postService = require("../services/postService");
 
-const postUpCtrl = async (req, res) => {
+const createPost = async (req, res) => {
   try {
     const { title, content, userId } = req.body;
 
@@ -8,7 +8,7 @@ const postUpCtrl = async (req, res) => {
       return res.status(400).json({ message: "KEY_ERROR" });
     }
 
-    await postService.postUpCtrl(title, content, userId);
+    await postService.createPost(title, content, userId);
 
     res.status(201).json({ message: "NEW POST CREATED!" });
   } catch (err) {
@@ -17,11 +17,11 @@ const postUpCtrl = async (req, res) => {
   }
 };
 
-const postGetCtrl = async (req, res) => {
+const getPost = async (req, res) => {
   try {
     const { title, content, userId } = req.body;
 
-    const resultPost = await postService.postGetCtrl(title, content, userId);
+    const resultPost = await postService.getPost(title, content, userId);
 
     res.status(200).json(resultPost);
   } catch (err) {
@@ -30,12 +30,12 @@ const postGetCtrl = async (req, res) => {
   }
 };
 
-const postPatchCtrl = async (req, res) => {
+const editPost = async (req, res) => {
   try {
     const { title, content } = req.body;
     const { postId } = req.params;
 
-    const editPost = await postService.postPatchCtrl(title, content, postId);
+    const editPost = await postService.editPost(title, content, postId);
 
     res.status(201).json(editPost);
   } catch (err) {
@@ -44,11 +44,11 @@ const postPatchCtrl = async (req, res) => {
   }
 };
 
-const postDeleteCtrl = async (req, res) => {
+const deletePost = async (req, res) => {
   try {
     const { postId } = req.params;
 
-    await postService.postDeleteCtrl(postId);
+    await postService.deletePost(postId);
 
     res.status(200).json({ message: "Post Deleted!" });
   } catch (err) {
@@ -57,11 +57,11 @@ const postDeleteCtrl = async (req, res) => {
   }
 };
 
-const postLikeCtrl = async (req, res) => {
+const postLike = async (req, res) => {
   try {
     const { postId, userId } = req.params;
 
-    await postService.postLikeCtrl(postId, userId);
+    await postService.postLike(postId, userId);
     
     res.status(201).json({ message: "Like Button Tapped!" });
   } catch (err) {
@@ -71,10 +71,10 @@ const postLikeCtrl = async (req, res) => {
 };
 
 module.exports = {
-  postUpCtrl,
-  postGetCtrl,
-  postPatchCtrl,
-  postDeleteCtrl,
-  postLikeCtrl,
+  createPost,
+  getPost,
+  editPost,
+  deletePost,
+  postLike,
 };
 
