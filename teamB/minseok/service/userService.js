@@ -9,11 +9,7 @@ const signUp = async (name, birth, contact, password) => {
         err.statusCode = 409;
         throw err;}
     
-    const createUser = await userDao.createUser(
-        name,
-        birth,
-        contact,
-        password);
+    const createUser = await userDao.createUser(name, birth, contact, password);
         return createUser};
 
 const searchUserList = async (userId) => {

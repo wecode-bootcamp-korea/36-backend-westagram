@@ -35,6 +35,7 @@ const createUserList = async (userId) => {
 	catch{const error = new Error('INVALID_DATA_INPUT');
 	error.statusCode = 500;
 	throw error;}
+	
 }
 
 

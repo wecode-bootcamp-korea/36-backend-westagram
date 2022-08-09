@@ -9,7 +9,7 @@ const postLike = async(user_id, post_id) =>{
 		`,
 		[user_id, post_id]
 	);}
-    catch{const error = new Error('INVALID_DATA_INPUT');
+    catch (err) {const error = new Error('INVALID_DATA_INPUT');
     error.statusCode = 500;
     throw error;}
 }

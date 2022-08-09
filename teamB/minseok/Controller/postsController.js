@@ -9,7 +9,7 @@ const createPost = async (req, res) => {
 }
         await postsService.createPost(title, content, user_id, userProfileImage, postingImageUrl);
     
-        res.status(201).json({message: 'CREATEING POST_SUCCESS',});
+        res.status(200).json({message: 'CREATEING POST_SUCCESS',});
 }
     catch (err) {console.log(err);
         return res.status(err.statusCode || 500).json({ message: err.message });
@@ -34,7 +34,7 @@ const updatePost = async (req, res) => {
         return res.status(400).json({ message: 'KEY_ERROR' });
          }
          const update =await postsService.updatePost(title, content, postingId)
-         res.status(201).json({data: update})
+         res.status(200).json({data: update})
     }
     catch (err) {console.log(err);
         return res.status(err.statusCode || 500).json({ message: err.message });
