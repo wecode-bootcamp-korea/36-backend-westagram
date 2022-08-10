@@ -1,5 +1,5 @@
 
-const { Database, initialize } = require("./Database.js");
+const { Database } = require("./Database.js");
 
 const posting = async ( user_id, title, post ) => {
 	try {
@@ -39,20 +39,20 @@ const viewUser = async ( id ) => {
 	try {
 		return await Database.query(
       `
-      SELECT posts
-				FROM (
-					SELECT json_object(
-						'no', u.no,
-							'id', u.id,
-							'posting', json_arrayagg(json_object(
-							'title', p.title,
-							'post', p.post)
-								)
-					) posts   
-						FROM users u
-						INNER JOIN posts p on u.no = p.user_id
-						WHERE u.no = ${id} GROUP BY u.no, u.name) sub;
-
+			SELECT posts
+			FROM (
+				SELECT json_object(
+					'no', u.no,
+					'id', u.id,
+					'posting', 
+					json_arrayagg(json_object(
+						'title', p.title,
+						'post', p.post)
+					)
+				) posts 
+					FROM users u
+					INNER JOIN posts p on u.no = p.user_id
+					WHERE u.no = ${id} GROUP BY u.no, u.name) sub;
       `,  
       
     )

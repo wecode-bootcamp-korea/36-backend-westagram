@@ -20,6 +20,5 @@ const initialize = Database
     });
 
     module.exports = {
-        Database,
-        initialize,
+        Database
     }

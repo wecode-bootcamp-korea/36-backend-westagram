@@ -1,3 +1,4 @@
+const { EntityPropertyNotFoundError } = require('typeorm');
 const postServices = require('../services/postServices');
 
 const posting = async (req, res) => {
@@ -30,11 +31,16 @@ const getPostAll = async (req, res) => {
 };
 
 const getPostUser = async (req, res) => {
+  
   const { id } = req.params;
+  
+
   try {
     const postUser = await postServices.postUser(id);
       res.status(200).json( {"userData" : JSON.parse(Object.values(postUser[0])) });
     }
+
+    
      catch (err) {
       console.log(err);
       return res.status(err.statusCode || 500).json({ message: err.message });
