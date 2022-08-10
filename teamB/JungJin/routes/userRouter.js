@@ -7,6 +7,8 @@ router.get('/lookup', userController.lookup);
 
 router.post('/signup', userController.signup);
 
+router.post('/login', userController.login);
+
 module.exports = {
 	router
 }
