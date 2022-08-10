@@ -31,5 +31,9 @@ router.use("/posts", postDeleteRouter.router);
 const postLikedRouter = require("./postRouter");
 router.use("/posts", postLikedRouter.router);
 
+// users/signin
+const signInRouter = require("./userRouter");
+router.use("/users", signInRouter.router);
+
 module.exports = router
 
