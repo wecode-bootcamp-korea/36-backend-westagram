@@ -5,9 +5,9 @@ const signUp = async(req, res) => {
     try{
         const {name, email, password, profileImage} = req.body;
 
-        // if ( !name || !email || !password || !profileImage){
-        //     return res.status(400).json({message: 'KEY_ERROR'});
-        // }
+        if ( !name || !email || !password || !profileImage){
+            return res.status(400).json({message: 'KEY_ERROR'});
+        }
 
         await userService.signUp(name, email, password, profileImage);
 
