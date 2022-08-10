@@ -1,14 +1,15 @@
-const userService = require('../servuces/userServices');
+const userService = require('../services/userService');
 
-const usersReg = async (req, res) => {
+const createUsers = async (req, res) => {
     try {
         const {name, gender, birth, contact, mbti} = req.body;
-        
+
         if (!name || !gender || !birth || !contact || !mbti) {
             return res.status(400).json({message: 'KEY_ERROR'});
-        } 
+        }
 
-        await userService.usersReg(name, gender, birth, contact, mbti);
+        await userService.createUsers(name, gender, birth, contact, mbti);
+        
         return res.status(201).json({message: 'userCreated'});
     } catch (err) {
         console.log(err);
@@ -17,5 +18,5 @@ const usersReg = async (req, res) => {
 };
 
 module.exports = {
-    usersReg
+    createUsers
 }
