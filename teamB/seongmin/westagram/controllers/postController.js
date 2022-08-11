@@ -1,5 +1,9 @@
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
 const postService = require('../services/postService');
 const postSearchService = require('../services/postSearchService');
+
+const secretKey = process.env.PRIVATEKEY;
 
 const errorHandler = (err, res) => {
     return res.status(err.statusCode || 500).json({message : err.message});
@@ -7,13 +11,16 @@ const errorHandler = (err, res) => {
 
 const createPost = async (req, res) => {
     try {
-        const { title, content, user_id } = req.body;
+        const token = req.headers.authorization;
+        const { title, content } = req.body;
 
-        if (!title || !content || !user_id) {
+        const decoded = jwt.verify(token, secretKey);
+
+        if (!title || !content) {
             return res.status(400).json({message : "KEY_ERROR"});
         }
 
-        await postService.createPost( title, content, user_id);
+        await postService.createPost( title, content, decoded['email']);
         return res.status(201).json({message : "CREAT_POST_SUCCESS"});
     } catch (err) {
         errorHandler(err, res);

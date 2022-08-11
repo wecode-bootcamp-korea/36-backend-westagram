@@ -11,14 +11,17 @@ app.use(cors());
 const dotenv = require('dotenv');
 dotenv.config();
 
+
 const port = process.env.PORT;
 const routes = require('./routes');
 
 app.use(routes);
 
+
 app.get('/ping', function (req, res, next) {
   res.json({message: 'pong'});
 });
+
 
 const start = async () => {
   try {
