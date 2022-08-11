@@ -1,6 +1,6 @@
 const {DataSource} = require('typeorm');
 
-const myDataSource = new DataSource({
+const appDataSource = new DataSource({
     type: process.env.TYPEORM_CONNECTION,
     host: process.env.TYPEORM_HOST,
     port: process.env.TYPEORM_PORT,
@@ -9,18 +9,18 @@ const myDataSource = new DataSource({
     database: process.env.TYPEORM_DATABASE
 })
 
-myDataSource.initialize()
+appDataSource.initialize()
     .then(()=>{
         console.log("Data Source has been initialized!");
     })
     .catch((err)=>{
         console.error("Error occurred during Data Source initialization", err);
-        myDataSource.destroy();
+        appDataSource.destroy();
     });
 
 const enrollPost = async(title, content, userId)=>{
     try {
-        return await myDataSource.query(
+        return await appDataSource.query(
             `INSERT INTO posts(
                 title,
                 content,
@@ -38,7 +38,7 @@ const enrollPost = async(title, content, userId)=>{
 
 const allPost = async()=>{
     try {
-        return await myDataSource.query(
+        return await appDataSource.query(
         `SELECT
             users.id UserId,
             users.profile_image userProfileImage,
@@ -57,7 +57,7 @@ const allPost = async()=>{
 
 const userPost = async(userId)=>{
     try {
-        let userData = await myDataSource.query(
+        let userData = await appDataSource.query(
             `SELECT
                 u.id userId,
                 u.name userName,
@@ -65,7 +65,7 @@ const userPost = async(userId)=>{
             FROM users u
             WHERE u.id = ${userId}`)
     
-        let datas = await myDataSource.query(
+        let datas = await appDataSource.query(
             `SELECT 
                 p.id postingId,
                 p.title postingTitle,
@@ -98,9 +98,9 @@ const userPost = async(userId)=>{
     }
 };
 
-const fixPost = async(title, content, postId)=>{
+const fixPost = async(title, content, postId, userId)=>{
     try {
-        await myDataSource.query(
+        await appDataSource.query(
             `UPDATE posts 
                 SET title= ?, 
                 content = ?
@@ -108,7 +108,7 @@ const fixPost = async(title, content, postId)=>{
             , [title, content, postId]
         );
     
-       let postNew = await myDataSource.query(
+       let postNew = await appDataSource.query(
             `SELECT 
                 u.id userId,
                 u.name userName,
@@ -117,7 +117,7 @@ const fixPost = async(title, content, postId)=>{
                 p.content postingContent
             FROM users u
             INNER JOIN posts p ON u.id = ${userId}
-            WHERE p.id=postId;`
+            WHERE p.id=${postId};`
             );
         return postNew;
     } catch(err){

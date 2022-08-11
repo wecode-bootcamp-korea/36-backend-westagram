@@ -1,4 +1,3 @@
-
 const postService = require('../services/postService')
 
 const enrollPost = async(req, res) => {
@@ -6,7 +5,7 @@ const enrollPost = async(req, res) => {
         const {title, content, userId} = req.body;
 
         if ( !title || !content || !userId){
-            return res.status(400).json({message: 'KEY_ERROR'});
+            return res.status(400).json({message: 'KeEY_ERROR'});
         }
 
         await postService.enrollPost(title, content, userId);
@@ -22,7 +21,7 @@ const allPost = async(req, res) => {
     try{
         await postService.allPost();
 
-        res.status(201).json({message:'ALLPOST_SUCCESS'});
+        res.status(200).json({message:'ALLPOST_SUCCESS'});
     } catch (err) {
         console.log(err);
         return res.status(err.statusCode||500).json({message: err.message});
@@ -45,13 +44,14 @@ const userPost = async(req, res) => {
 
 const fixPost = async(req, res) => {
     try{
-        const {title, content, postId} = req.body;
+        const {userId} = req.params;
+        const {title, content, postId} = req.body; 
 
         if ( !title || !content || !postId){
             return res.status(400).json({message: 'KEY_ERROR'});
         }
 
-        await postService.enrollPost(title, content, postId);
+        await postService.fixPost(title, content, postId, userId);
 
         res.status(201).json({message:'FIXPOST_SUCCESS'});
     } catch (err) {

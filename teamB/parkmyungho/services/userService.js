@@ -10,13 +10,12 @@ const signUp = async (name, email, password, profileImage) => {
         throw err;
     }
 
-    const createUser = await userDao.createUser(
+    return await userDao.createUser(
         name,
         email,
         password,
         profileImage
     );
-    return createUser;
 };
 
 module.exports ={

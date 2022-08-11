@@ -1,7 +1,7 @@
 
 const {DataSource} = require('typeorm');
 
-const myDataSource = new DataSource({
+const appDataSource = new DataSource({
     type: process.env.TYPEORM_CONNECTION,
     host: process.env.TYPEORM_HOST,
     port: process.env.TYPEORM_PORT,
@@ -10,18 +10,18 @@ const myDataSource = new DataSource({
     database: process.env.TYPEORM_DATABASE
 })
 
-myDataSource.initialize()
+appDataSource.initialize()
     .then(()=>{
         console.log("Data Source has been initialized!");
     })
     .catch((err)=>{
         console.error("Error occurred during Data Source initialization", err);
-        myDataSource.destroy();
+        appDataSource.destroy();
     });
 
 const createUser = async(name, email, profileImage, password)=>{
     try {
-        return await myDataSource.query(
+        return await appDataSource.query(
             `INSERT INTO users(
                 name,
                 email,

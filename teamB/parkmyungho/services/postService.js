@@ -1,31 +1,28 @@
 const postDao = require('../models/postDao')
 
 const enrollPost = async (title, content, userId) => {
-    const enrollPost = await postDao.enrollPost(
+    return await postDao.enrollPost(
         title,
         content,
         userId
     );
-    return enrollPost;
 };
 
 const allPost = async () => {
-    const allPost = await postDao.allPost();
-    return allPost;
+    return await postDao.allPost();
 };
 
 const userPost = async (userId) => {
-    const userPost = await postDao.userPost(userId);
-    return userPost;
+    return await postDao.userPost(userId); 
 };
 
-const fixPost = async (title, content, postId) => {
-    const fixPost = await postDao.fixPost(
+const fixPost = async (title, content, postId, userId) => {
+    return await postDao.fixPost(
         title,
         content,
-        postId
+        postId,
+        userId
     );
-    return fixPost;
 };
 
 module.exports ={

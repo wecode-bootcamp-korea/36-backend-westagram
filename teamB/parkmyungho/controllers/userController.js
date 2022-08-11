@@ -1,4 +1,3 @@
-
 const userService = require('../services/userService')
 
 const signUp = async(req, res) => {
@@ -7,6 +6,18 @@ const signUp = async(req, res) => {
 
         if ( !name || !email || !password || !profileImage){
             return res.status(400).json({message: 'KEY_ERROR'});
+        }
+
+        if (!email.includes('@')){
+            const error = new Error ('EMAIL_INVALID')
+            error.statusCode = 400
+            throw error;
+        }
+
+        if(password.length < 10){
+            const error = new Error('PASSWORD_INVALID')
+            error.statusCode = 400
+            throw error;
         }
 
         await userService.signUp(name, email, password, profileImage);
