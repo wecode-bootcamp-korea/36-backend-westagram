@@ -31,6 +31,15 @@ const lookupUser = () => {
     )
 };
 
+const loginUser = (email) => {
+    return database.query(`
+        SELECT 
+            password
+        FROM users
+        WHERE email = '${email}'`
+    )
+}
+
 module.exports = {
-    createUser, lookupUser
+    createUser, lookupUser, loginUser
 }
