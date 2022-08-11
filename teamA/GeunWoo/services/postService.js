@@ -70,5 +70,9 @@ const deletePostings = async (post_id) => {
 };
 
 module.exports = {
-    postPostings, getPostings, getPostingsByUserId, updatePostings, deletePostings
+    postPostings, 
+    getPostings, 
+    getPostingsByUserId, 
+    updatePostings, 
+    deletePostings
 }
