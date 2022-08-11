@@ -9,7 +9,9 @@ const heart = async (req, res) => {
     try {
         const {user_id, post_id} = req.body
         if(!user_id || !post_id){
-            throw new Error('KEY_ERROR')
+            const err = new Error('KEY_ERROR')
+            err.statusCode = 400
+            throw err
         }
         await likeService.heart(user_id, post_id);
         res.status(201).json({message : 'likeCreated'})
