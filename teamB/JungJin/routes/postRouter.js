@@ -3,9 +3,11 @@ const postController = require('../controllers/postController');
 
 const router = express.Router();
 
-router.get('/lookup', postController.lookup)
+const { validateToken } = require('../middlewares/auth.js');
 
-router.post('/upload', postController.upload)
+router.get('/lookup', validateToken, postController.lookup)
+
+router.post('/upload', validateToken, postController.upload)
 
 router.delete('/del/:postid', postController.del)
 

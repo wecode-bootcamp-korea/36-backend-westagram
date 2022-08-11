@@ -1,19 +1,15 @@
 const postDao = require('../models/postDao');
 const userDao = require('../models/userDao');
 
-const createPost = async (title, content, user_id) => {
-    const userCheckResult = await userDao.userCheck(user_id);
-    
-    if (Number(Object.values(userCheckResult[0])[0]) !== 1) {
-        const err = new Error('USER_IS_NOT_EXISTED');
-        err.statusCode = 400;
-        throw err;
-    }
+const createPost = async (title, content, email) => {
+    const userId = await userDao.findUserId(email);
+
+    const userIdData = userId[0]['id'];
 
     const insertPost = await postDao.insertPost(
         title,
         content,
-        user_id
+        userIdData
     );
 
     return insertPost;
