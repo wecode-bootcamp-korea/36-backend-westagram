@@ -1,6 +1,5 @@
 const postDao = require('../models/postDao')
 
-
 const posting = async (user_id, title, post) => {
   const posting = await postDao.posting(
     user_id, 
@@ -26,8 +25,11 @@ const postDelete = async ( no, id ) => {
 };
   
 const postUpdate = async ( no, title, post ) => {
-  const postUpdate = await postDao.postUpdate( no, title, post );
-    return postUpdate
+  if (await postDao.checkPost(no) == false) {
+    throw new Error('POSTING_IS_NOT_EXISTED')
+   }  
+    const postUpdate = await postDao.postUpdate( no, title, post );
+      return postUpdate
 };
   
 const postLike = async ( no, id ) => {
