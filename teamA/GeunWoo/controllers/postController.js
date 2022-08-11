@@ -21,7 +21,7 @@ const getPostings = async (req, res) => {
     try {
         const getPostings = await postService.getPostings();
 
-        return res.status(201).json(getPostings);
+        return res.status(200).json(getPostings);
     } catch (err) {
         console.log(err);
         return res.status(err.statusCode || 500).json({message: err.message});
@@ -80,5 +80,9 @@ const deletePostings = async (req, res) => {
 };
 
 module.exports = {
-    postPostings, getPostings, getPostingsByUserId, updatePostings, deletePostings
+    postPostings, 
+    getPostings, 
+    getPostingsByUserId, 
+    updatePostings, 
+    deletePostings
 }

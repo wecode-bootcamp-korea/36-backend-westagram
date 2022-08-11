@@ -4,7 +4,7 @@ const createLikes = async (req, res) => {
     try {
         const {user_id, post_id} = req.body;
 
-        if (!user_id || !post_id) {
+        if (!user_id || !post_id || typeof(Number(user_id)) != 'number' || typeof(Number(post_id)) != 'number') {
             return res.status(400).json({message: 'KEY_ERROR'});
         }
 
