@@ -51,8 +51,36 @@ const userCheck = async (userId) => {
     }
 }
 
+const passwordCheck = async(email) => {
+    try {
+        return await dataSource.query(`
+        SELECT
+            password
+        FROM users
+        WHERE email = "${email}";
+        `)
+    } catch (err) {
+        errorHandler();
+    }
+}
+
+const findUserId = async(email) => {
+    try{
+        return await dataSource.query(`
+        SELECT 
+            id
+        FROM users
+        WHERE email = "${email}";
+        `)
+    } catch (err) {
+        errorHandler();
+    }
+}
+
 module.exports = {
     createUser,
     search,
-    userCheck
+    userCheck,
+    passwordCheck,
+    findUserId
 }
