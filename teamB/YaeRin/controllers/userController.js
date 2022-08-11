@@ -10,7 +10,20 @@ const signUp = async (req, res) => {
 
     await userService.signUp(name, email, password, profileImage);
 
-    res.status(201).json({ message: "SIGNUP_SUCCESS" });
+    res.status(201).json({ message: "User Created!" });
+  } catch (err) {
+    console.log(err);
+    return res.status(err.statusCode || 500).json({ message: err.message });
+  }
+};
+
+const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const jwtToken = await userService.login(email, password);
+
+    res.status(201).json({ jwtToken });
   } catch (err) {
     console.log(err);
     return res.status(err.statusCode || 500).json({ message: err.message });
@@ -21,12 +34,8 @@ const userPostList = async (req, res) => {
   try {
     const { name, title, content } = req.body;
     const { userId } = req.params;
-    const resultUsersPosts = await userService.userPostList(
-      userId,
-      name,
-      title,
-      content
-    );
+
+    const resultUsersPosts = await userService.userPostList(userId, name, title, content);
 
     let postings = [];
     let data = {
@@ -51,6 +60,6 @@ const userPostList = async (req, res) => {
 
 module.exports = {
   signUp,
+  login,
   userPostList,
 };
-
