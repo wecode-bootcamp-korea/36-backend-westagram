@@ -5,7 +5,7 @@ const emailValidation = (email) => {
 
   if (!emailCheck.test(email)) {
     const err = new Error("INVALID_EMAIL");
-    err.statusCode = 401;
+    err.statusCode = 400;
     throw err;
   }
 };

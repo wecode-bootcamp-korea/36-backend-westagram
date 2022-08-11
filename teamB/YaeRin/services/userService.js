@@ -16,7 +16,7 @@ const signUp = async (name, email, password, profileImage) => {
   return createUser;
 };
 
-const login = async (email, password) => {
+const logIn = async (email, password) => {
   const user = await userDao.userLogin(email);
 
   const result = await bcrypt.compare(password, user[0].password);
@@ -26,7 +26,8 @@ const login = async (email, password) => {
     err.statusCode = 401;
     throw err;
   }
-  return jwt.sign({ email }, process.env.JWT_SECRET);
+  const decoded = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: "7d" });
+  return decoded;
 };
 
 const userPostList = async (id, name, title, content) => {
@@ -36,6 +37,6 @@ const userPostList = async (id, name, title, content) => {
 
 module.exports = {
   signUp,
-  login,
+  logIn,
   userPostList,
 };

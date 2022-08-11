@@ -17,11 +17,11 @@ const signUp = async (req, res) => {
   }
 };
 
-const login = async (req, res) => {
+const logIn = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const jwtToken = await userService.login(email, password);
+    const jwtToken = await userService.logIn(email, password);
 
     res.status(201).json({ jwtToken });
   } catch (err) {
@@ -60,6 +60,6 @@ const userPostList = async (req, res) => {
 
 module.exports = {
   signUp,
-  login,
+  logIn,
   userPostList,
 };

@@ -21,7 +21,9 @@ const createUser = async (name, email, password, profileImage) => {
 const userLogin = async (email) => {
   try {
     return await myDataSource.query(`
-      SELECT *
+      SELECT
+        u.email,
+        u.password
       FROM users u
       WHERE u.email = ?`,
       [email]
