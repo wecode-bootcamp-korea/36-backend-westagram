@@ -9,7 +9,7 @@ const createPost = async (userId, title, content) => {
             user_id,
             title, 
             content
-            ) VALUES (?, ?, ?)`,
+       ) VALUES (?, ?, ?)`,
 
       [userId, title, content]
     );

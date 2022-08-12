@@ -1,6 +1,7 @@
 //service/postService.js
 
 const postDao = require("../models/postDao");
+const userDao = require("../models/userDao");
 
 const post = async (userId, title, content) => {
   if (title.trim().length == 0 || content.trim().length == 0) {
@@ -8,6 +9,7 @@ const post = async (userId, title, content) => {
     err.statusCode = 400;
     throw err;
   }
+
   const createPost = await postDao.createPost(userId, title, content);
 
   return createPost;

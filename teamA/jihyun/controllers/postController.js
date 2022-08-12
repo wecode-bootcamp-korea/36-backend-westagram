@@ -4,9 +4,10 @@ const postService = require("../services/postService");
 
 const post = async (req, res) => {
   try {
-    const { userId, title, content } = req.body;
+    const { title, content } = req.body;
+    const userId = req.payload.id;
 
-    if (!userId || !title || !content) {
+    if ( !userId || !title || !content) {
       return res.status(400).json({ message: "KEY_ERROR" });
     }
 
@@ -47,7 +48,7 @@ const patchPost = async (req, res) => {
     const { postId } = req.params;
     const { postingContent } = req.body;
 
-    if (!postingContent || !postId) {
+    if (!postingContent) {
       return res.status(400).json({ message: "KEY_ERROR" });
     }
 

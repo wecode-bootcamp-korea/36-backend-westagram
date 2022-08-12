@@ -2,18 +2,16 @@
 
 const { database } = require("./dataSource");
 
-const createUser = async (name, email, password, profileImage) => {
+const createUser = async (email, password) => {
   try {
-    return await database.query(
+    await database.query(
       `INSERT INTO users(
-			name,
-			email,
-			password,
-			profile_image
-		) VALUES (?, ?, ?, ?);
+			  email,
+			  password
+		 ) VALUES (?, ?);
 		`,
 
-      [name, email, password, profileImage]
+      [ email, password ]
     );
   } catch (err) {
     const error = new Error("INVALID_DATA_INPUT");
@@ -24,17 +22,32 @@ const createUser = async (name, email, password, profileImage) => {
 
 const existUser = async (email) => {
   try {
-    const count = await database.query(
-      `SELECT count(*) FROM users WHERE email=?`,
+    return await database.query(
+      `SELECT 
+        count(*) 
+       FROM users 
+       WHERE email=?`,
+
       [email]
     );
-    console.log(count);
-    return count;
   } catch (err) {
     const error = new Error("USER_DOES_NOT_EXIST");
     error.statusCode = 404;
     throw error;
   }
+};
+
+const getUserByEmail = async (email) => {
+  const [user] = await database.query(
+    `
+      SELECT *
+      FROM users
+      WHERE email = ?
+    `,
+    [email]
+  );
+
+  return user;
 };
 
 // 암호화된 비번
@@ -55,4 +68,4 @@ const validPwd = async (email) => {
   }
 };
 
-module.exports = { createUser, existUser, validPwd };
+module.exports = { createUser, existUser, validPwd, getUserByEmail };
