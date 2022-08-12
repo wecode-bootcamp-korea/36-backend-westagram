@@ -12,4 +12,3 @@ router.post("/:postId/likes/:userId", postController.postLike);
 module.exports = {
   router,
 };
-
