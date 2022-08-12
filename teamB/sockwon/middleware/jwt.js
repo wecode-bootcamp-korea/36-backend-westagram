@@ -14,6 +14,7 @@ const validationToken = async (req,res,next)=>{
         const token= req.headers.authorization;
         const result = isRightToken(token);
         if(result){
+            console.log(result)
             const {id, email} = result
             req.body.user_id = id;
             req.body.email = email;
@@ -22,7 +23,7 @@ const validationToken = async (req,res,next)=>{
         
     }catch(err){
         console.log(err)
-        res.status(400).json({MESSAGE : "INVALID TOKEN! reject"})
+        res.status(400).json({MESSAGE : "INVALID TOKEN!"})
     }
 }
 

@@ -1,4 +1,6 @@
 const postDao = require('../models/postDao');
+const bcrypt = require('../middleware/bcypt');
+const jwt = require('../middleware/jwt')
 
 const createPost = async (title, content, id)=> {
     try{
@@ -60,7 +62,18 @@ const logIn = async (email, password)=>{
         email,
         password
     )
-    return logInAu
+    const temp = logInAu[0].password
+    const payLoad = {email : logInAu[0].email, id : logInAu[0].id}
+    const auth = await bcrypt.verifyHash(password, temp)
+        if(auth){
+            const jwtToken = jwt.newJwt(payLoad)
+            console.log(jwtToken)
+            return jwtToken
+        }
+        else{
+            console.log(auth)
+            return auth;
+    }
 }
 
 module.exports = {

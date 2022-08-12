@@ -14,7 +14,7 @@ const createPost = (title, content, id)=>{
         [title, content, id]
     );
     }catch(err){
-        const error = new Error('INVALID_DATA_INPUT! by Lee');
+        const error = new Error('INVALID_DATA_INPUT');
 		error.statusCode = 500;
 		throw error;
     }
@@ -32,7 +32,7 @@ const getAllPost = async (user_id)=>{
         );
         return temp
     }catch(err){
-        const error = new Error("INVALID GETTER!");
+        const error = new Error("INVALID DATA");
         error.statusCode = 500;
         throw error;
     }
@@ -49,7 +49,7 @@ const deletePost = async (postId)=>{
         )
     }catch(err){
         console.log(err)
-        const error = new Error("INVALID GETTER!");
+        const error = new Error("INVALID DATA");
         error.statusCode = 500;
         throw error;
     }
@@ -67,13 +67,13 @@ const patchPost = (title, content, postId)=>{
             `
         )
     }catch(err){
-        const error = new Error("INVALID GETTER!");
+        const error = new Error("INVALID DATA");
         error.statusCode = 500;
         throw error;
     }
 }
 
-const logIn = async (email, password)=>{
+const logIn = async (email,password)=>{
 
     try{
         const userInfo = await appDataSource.query(
@@ -86,19 +86,10 @@ const logIn = async (email, password)=>{
             WHERE users.email = "${email}"
             `
         )
-        const temp = userInfo[0].password
-        const payLoad = {email : userInfo[0].email, id : userInfo[0].id}
-
-        const auth = await bcrypt.verifyHash(password, temp)
-        if(auth){
-            const jwtToken = jwt.newJwt(payLoad)
-            return jwtToken
-        }
-        else{
-            return auth;
-        }
+        return userInfo;
+        
     }catch(err){
-        const error = new Error("login Failed!");
+        const error = new Error("login Failed");
         error.statusCode = 401;
         throw error;
     }

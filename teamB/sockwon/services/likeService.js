@@ -8,7 +8,7 @@ const createLike = async (user_id, post_id)=> {
 )
     return createLike;
 }catch(err){
-    const error = new Error("likeService.. INVALID DATA->user_id, post_id");
+    const error = new Error("INVALID DATA");
         error.statusCode = 400;
         throw error;
 }

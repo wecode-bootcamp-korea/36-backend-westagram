@@ -13,7 +13,7 @@ const createUser =  async ( email, password) => {
 		[ email, cryptedPassword ]
 	  );
 	} catch (err) {
-		const error = new Error('INVALID_DATA_INPUT! by lee');
+		const error = new Error('INVALID_DATA_INPUT');
 		error.statusCode = 500;
 		throw error;
 	}

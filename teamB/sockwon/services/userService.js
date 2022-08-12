@@ -2,7 +2,6 @@ const userDao = require('../models/userDao')
 
 const signUp = async (email, password) => {
     const pwValidation = new RegExp(
-      // '^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,20})'
       '^[a-zA-Z0-9]{4,10}$'
     );
     const emailValidation = new RegExp(

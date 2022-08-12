@@ -11,7 +11,7 @@ const createLike = (user_id, post_id)=>{
         [user_id, post_id]
     );
     }catch(err){
-        const error = new Error('INVALID_DATA_INPUT! by Lee');
+        const error = new Error('INVALID_DATA_INPUT');
 		error.statusCode = 500;
 		throw error;
     }
