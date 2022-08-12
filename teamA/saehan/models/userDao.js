@@ -1,5 +1,29 @@
 const { dataSource } = require("../utils/daoUtil");
 
+const emailDuplicate = async (email) => {
+    try{
+        return await dataSource.query(
+            `SELECT EXISTS(
+                SELECT * 
+                FROM users 
+                WHERE email="${email}");
+        `);
+    } catch(err) {
+        const error = new Error('INVALID_DATA_INPUT');
+        error.statusCode = 500;
+        throw error;
+    };
+};
+
+const getUserByEmail = async(email) => {
+        const [user] = await dataSource.query(
+            `SELECT *
+            FROM users
+            WHERE email = "${email}";
+            `);
+    return user;
+};
+
 const createUser = async (name, email, password) => {
     try {
         return await dataSource.query(
@@ -43,5 +67,7 @@ const showPosts = async (userId) => {
 
 module.exports = {
     createUser,
-    showPosts
+    showPosts,
+    emailDuplicate,
+    getUserByEmail
 }

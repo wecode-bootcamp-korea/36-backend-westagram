@@ -5,10 +5,10 @@ const postsList = async() => {
     try{
         return await dataSource.query(
         `SELECT 
-            p.id,
+            p.id AS Post_ID,
             p.title,
             p.content,
-            p.user_id
+            p.user_id AS User_ID
         FROM posts p;
         `);
     } catch(err) {

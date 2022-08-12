@@ -2,9 +2,9 @@ const postService = require("../services/postService");
 
 const allPosts = async (req, res) => {
     try {
-        const list = postService.allPosts();
-        res.status(201).json({"data": list});
-    } catch {
+        const list = await postService.allPosts();
+        res.status(201).json({"Postings": list});
+    } catch(err) {
         console.log(err);
         return res.status(err.statusCode || 500).json({message: err.message});
     }
@@ -13,10 +13,11 @@ const allPosts = async (req, res) => {
 const posting = async (req, res) => {
     try {
         const {title, content, user_id} = req.body;
-        if(!title || !content || !user_id){
+        const token = req.headers.authorization;
+        if(!title || !content || !user_id||!token){
             return res.status(400).json({ message : 'KEY_ERROR'});
         };
-        await postService.posting(title, content, user_id);
+        await postService.posting(title, content, user_id, token);
         return res.status(201).json({message : "POST_CREATED"});
     } catch(err) {
         console.log(err);
