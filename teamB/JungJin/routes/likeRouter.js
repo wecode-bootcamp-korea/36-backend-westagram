@@ -3,7 +3,7 @@ const likeController = require('../controllers/likeController');
 
 const router = express.Router();
 
-router.get('/lookup', likeController.lookup)
+router.get('/', likeController.lookup)
 
 router.post('/heart', likeController.heart)
 

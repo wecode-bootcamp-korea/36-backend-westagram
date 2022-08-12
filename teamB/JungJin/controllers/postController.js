@@ -9,7 +9,9 @@ const upload = async (req, res) => {
     try {
         const {title, content, user_id, imageurl} = req.body
         if(!title || !content || !user_id){
-            throw new Error('KEY_ERROR')
+            const err = new Error('KEY_ERROR')
+            err.statusCode = 400
+            throw err
         }
         await postService.upload(title, content, user_id, imageurl);
         res.status(201).json({message : 'postCreated'})
@@ -59,10 +61,12 @@ const postpatch = async (req, res) => {
         const postid = req.params.postid
         const content = req.body.content
         if(!content){
-            throw new Error('KEY_ERROR')
+            const err = new Error('KEY_ERROR')
+            err.statusCode = 400
+            throw err
         }
         await postService.postpatch(postid, content);
-        res.status(201).json({message : "UpdatedSuccess"})
+        res.status(200).json({message : "UpdatedSuccess"})
     }
     catch (err) {
         console.log(err)

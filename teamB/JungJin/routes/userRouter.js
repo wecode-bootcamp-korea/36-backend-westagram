@@ -3,7 +3,7 @@ const userController = require('../controllers/userController');
 
 const router = express.Router();
 
-router.get('/lookup', userController.lookup);
+router.get('/', userController.lookup);
 
 router.post('/signup', userController.signup);
 

@@ -15,6 +15,6 @@ app.get('/ping', function(req, res){
 })
 
 app.listen(process.env.PORT, function () {
-  console.log(`server listening on port ${process.env.PORT}`)
+  console.log(`server listening on port ${process.env.PORT}`) 
 })
 

@@ -5,21 +5,21 @@ const router = express.Router();
 
 const { validateToken } = require('../middlewares/auth.js');
 
-router.get('/lookup', validateToken, postController.lookup)
+router.get('/', validateToken, postController.lookup)
 
 router.post('/upload', validateToken, postController.upload)
 
-router.delete('/del/:postid', postController.del)
+router.delete('/:postid', postController.del)
 
-router.get('/image/lookup', postController.imagelookup)
+router.get('/image', postController.imagelookup)
 
-router.get('/image/lookup/:userid', postController.imageuserlookup)
+router.get('/image/:userid', postController.imageuserlookup)
 
-router.get('/title/lookup', postController.titlelookup)
+router.get('/title', postController.titlelookup)
 
-router.get('/title/lookup/:postid', postController.titlepostlookup)
+router.get('/title/:postid', postController.titlepostlookup)
 
-router.patch('/update/:postid', postController.postpatch)
+router.patch('/:postid', postController.postpatch)
 
 module.exports = {
 	router

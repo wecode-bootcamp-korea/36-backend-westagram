@@ -20,19 +20,18 @@ const signup = async (name, email, profile_image, beforepassword) => {
         throw err
     }
     const password = await bcrypt.hash(beforepassword, saltRounds)
-    // const result = await bcrypt.compare(beforepassword, password)
     const createUser = await userDao.createUser(name, email, profile_image, password)
     return createUser;
 };
 
-const lookup = async () => {
-    const lookupUser = await userDao.lookupUser()
-    return lookupUser;
+const lookup = async (query) => {
+    const lookupUser = await userDao.lookupUser(query)
+    return lookupUser
 };
 
 const login = async (email, checkpassword) => {
     const loginUser = await userDao.loginUser(email)
-    const result = await bcrypt.compare(checkpassword, loginUser[0].password) //19-dsdaf
+    const result = await bcrypt.compare(checkpassword, loginUser[0].password)
     if(result) {
         const token = jwt.sign(payLoad, secretKey)
         return token;
