@@ -103,6 +103,31 @@ const deletePostings = async (post_id) => {
         throw error;
     }
 }
+
+
+const getUserById = async (user_id) => {
+    try {
+        const data = await myDataSource.query(
+                        `SELECT 
+                            id,
+                            email,
+                            password
+                        FROM users u
+                        WHERE u.id=?
+                        `,
+                        [user_id]
+        );
+
+        return data;
+
+    } catch (err) {
+        const error = new Error('INVALID_ID');
+        error.statusCode = 500;
+        throw error;
+    }
+  };
+  
+
 module.exports = {
     postPostings, 
     getPostings, 
