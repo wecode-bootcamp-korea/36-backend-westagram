@@ -3,13 +3,13 @@ const postServices = require('../services/postServices');
 
 const posting = async (req, res) => {
   try {
-    const { user_id, title, post } = req.body;
+    const { userId, title, post } = req.body;
 
-    if ( !user_id || !title || !post ) {
+    if ( !userId || !title || !post ) {
       return res.status(400).json({ message: 'FAIL_POSTING' });
     }
 
-    await postServices.posting( user_id, title, post );
+    await postServices.posting( userId, title, post );
     return res.status(201).json({
       message: 'POSTING_SUCCESS',
     })
@@ -32,10 +32,10 @@ const getPostAll = async (req, res) => {
 
 const getPostUser = async (req, res) => {
   
-  const { id } = req.params;
+  const { userId } = req.params;
 
   try {
-    const postUser = await postServices.postUser(id);
+    const postUser = await postServices.postUser(userId);
       res.status(200).json( {"userData" : JSON.parse(Object.values(postUser[0])) });
     }
 
@@ -47,9 +47,9 @@ const getPostUser = async (req, res) => {
 };
 
 const deletePost = async ( req, res ) => {
-  const { no, id } = req.params;
+  const { postId, userId } = req.params;
   try {
-    const deletePost = await postServices.postDelete( no, id );
+    const deletePost = await postServices.postDelete( postId, userId);
       res.status(200).json({ message: "DELETE SUCCESS" });
     }
      catch (err) {
@@ -59,16 +59,16 @@ const deletePost = async ( req, res ) => {
 };
 
 const postUpdate = async ( req, res ) => {
-  const { no } = req.params;
+  const { postId } = req.params;
   const { title, post } = req.body;
   try {
 
     if( !post || !title ) {
-      throw new Error('TITLE_OR_POST_IS_NULL');
+      throw new Error('INVALID_DATA_INPUT');
     } 
 
-    const postUpdate = await postServices.postUpdate( no, title, post );
-      res.status(200).json({ message: "UPDATE No." + `${no}` + " POST" });
+    const postUpdate = await postServices.postUpdate( postId, title, post );
+      res.status(200).json({ message: "UPDATE No." + `${postId}` + " POST" });
     }
      catch (err) {
       console.log(err);
@@ -77,12 +77,12 @@ const postUpdate = async ( req, res ) => {
 };
 
 const postLike = async ( req, res ) => {
-  const { no, id } = req.params;
+  const { postId, userId } = req.params;
 
   try {
     
-    const postLike = await postServices.postLike( no, id );
-      res.status(200).json({ message: "User" + `${id}` +" LIKED No." + `${no}` + " POST" });
+    const postLike = await postServices.postLike( postId, userId );
+      res.status(200).json({ message: "User" + `${userId}` +" LIKED No." + `${postId}` + " POST" });
     }
      catch (err) {
       console.log(err);

@@ -1,14 +1,14 @@
 const userDao = require('../models/userDao')
 
-const signUp = async (user_id, password, name, age) => {
+const signUp = async (email, password, name, age) => {
 
     const emailIdCheck = /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
     const pwValidation = /(?=.*\d{1,50})(?=.*[~`!@#$%\^&*()-+=]{1,50})(?=.*[a-zA-Z]{2,50}).{8,50}$/;
-    const checkIdDao = await userDao.checkId(user_id)
+    const checkIdDao = await userDao.checkId(email)
     resultIdCheck = Number(Object.values(checkIdDao[0])[0])
 
 
-    if ( !user_id.match(emailIdCheck)) {
+    if ( !email.match(emailIdCheck)) {
         const error = new Error('ID_IS_NOT_VALID');
         error.statusCode = 409;
         throw error;
@@ -27,7 +27,7 @@ const signUp = async (user_id, password, name, age) => {
     }
 
       const createUser = await userDao.createUser(
-        user_id, 
+        email, 
         password, 
         name, 
         age
