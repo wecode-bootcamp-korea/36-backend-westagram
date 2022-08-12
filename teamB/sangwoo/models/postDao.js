@@ -1,6 +1,51 @@
 const database = require('./dataSource');
 
-const createPost = async ( title, content, user_id ) => {
+const dataErrors = (err) => {
+    const error = new Error('INVALID_DATA_INPUT');
+    error.statusCode = 500;
+    throw error;
+}
+
+const getPostPublishers = async (userId) => {
+    const [user] = await database.query(
+        `SELECT
+            user_id userId
+        FROM posts p
+        WHERE p.user_id = '${userId}'
+        `
+    )
+    return user;
+}
+
+const findPostUser = async (userId) => {
+    const [user] = await database.query(
+        `
+        SELECT 
+            user_id userId
+        FROM posts p 
+        WHERE EXISTS(
+            SELECT 
+                id
+            FROM users u
+            WHERE u.id = '${userId}'
+        )
+        `
+    ) 
+    return user;
+}
+
+const findPost = async (postId) => {
+    const [post] = await database.query(
+        `
+        SELECT
+            id postId
+        FROM posts p
+        WHERE p.id = '${postId}'
+        `
+    )
+    return post
+}
+const createPost = async ( title, content, userId ) => {
     try {
         return await database.query(
             `INSERT INTO posts(
@@ -9,12 +54,10 @@ const createPost = async ( title, content, user_id ) => {
                 user_id
             ) VALUES( ?, ?, ? )
             `,
-            [ title, content, user_id ]
+            [ title, content, userId ]
         )
     } catch (err) {
-        const error = new Error('INVALID_DATA_INPUT');
-        error.statusCode = 500;
-        throw error;
+        dataErrors(err);
     }
 };
 
@@ -33,9 +76,7 @@ const viewPost = async () => {
         )
     }
     catch (err) {
-        const error = new Error('INVALID_DATA_INPUT');
-        error.statusCode = 500;
-        throw error;
+        dataErrors(err);
     }
 }
 
@@ -52,13 +93,10 @@ const postUser = async ( userId ) => {
                 ) posting FROM users u
             INNER JOIN posts p ON u.id = p.user_id
             WHERE u.id = ${ userId }
-            
         `,  
     )      
     } catch (err) {
-        const error = new Error('INVALID_DATA_INPUT');
-        error.statusCode = 500;
-        throw error;
+        dataErrors(err);
     }
 }
 
@@ -86,9 +124,7 @@ const patchPost = async ( userId, postId, title, content ) => {
                 `,
     )       
     } catch (err) {
-        const error = new Error('INVALID_DATA_INPUT');
-        error.statusCode = 500;
-        throw error;
+        dataErrors(err);
     }
 }
 
@@ -101,9 +137,7 @@ const postDelete = async ( postId ) => {
         )
     }
     catch (err) {
-        const error = new Error('INVALID_DATA_INPUT');
-        error.statusCode = 500;
-        throw error;
+        dataErrors(err);
     }
 }
 
@@ -120,9 +154,7 @@ const postLike = async ( postId, userId ) => {
         )
     }
     catch (err) {
-        const error = new Error('INVALID_DATA_INPUT');
-        error.statusCode = 500;
-        throw error;
+        dataErrors(err);
     }
 }
 
@@ -132,6 +164,9 @@ module.exports = {
     postUser,
     patchPost,
     postDelete,
-    postLike
+    postLike,
+    getPostPublishers,
+    findPostUser,
+    findPost
 }
 

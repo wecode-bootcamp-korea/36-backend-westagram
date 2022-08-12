@@ -1,10 +1,10 @@
 const postDao = require('../models/postDao');
 
-const postRegist = async ( title, content, user_id ) => {
+const postRegist = async ( title, content, userId ) => {
     const createPost = await postDao.createPost(
         title,
         content,
-        user_id
+        userId
     );
     return createPost;
 };
@@ -15,14 +15,29 @@ const allPost = async () => {
 }
 
 const userPost = async( userId ) => {
-    const postUser = await postDao.postUser( 
-        userId
-    );
+    const findUserPost = await postDao.findPostUser(userId)
+    const getUserPost = await postDao.getPostPublishers(userId)
+    
+    if(!findUserPost || !getUserPost){
+        const err = new Error ('NO_USER_OR_POSTS')
+        err.statusCode = 404;
+        throw err;
+    }
+    const postUser = await postDao.postUser( userId );
+
     return postUser;
 }
 
 const updatePost = async ( userId, postId, title, content ) => {
+    const findUserPost = await postDao.findPostUser(userId)
+    const getUserPost = await postDao.findPost(postId)
     
+    if(!findUserPost || !getUserPost){
+        const err = new Error ('NO_USER_OR_POSTS')
+        err.statusCode = 404;
+        throw err;
+    }
+
     const patchPost = await postDao.patchPost(
         userId,
         postId,
@@ -34,16 +49,27 @@ const updatePost = async ( userId, postId, title, content ) => {
 };
 
 const deletePost = async ( postId ) => {
-    const postDelete = await postDao.postDelete(
-        postId
-    );
+    const getUserPost = await postDao.findPost(postId)
+    
+    if(!getUserPost){
+        const err = new Error ('NOT_POSTS')
+        err.statusCode = 404;
+        throw err;
+    }
+    const postDelete = await postDao.postDelete( postId );
     return postDelete;
 };
 
 const likePost = async ( postId, userId ) => {
-    const postLike = await postDao.postLike(
-        postId, userId
-    );
+    const findUserPost = await postDao.findPostUser(userId)
+    const getUserPost = await postDao.findPost(postId)
+    
+    if(!findUserPost || !getUserPost){
+        const err = new Error ('NO_USER_OR_POSTS')
+        err.statusCode = 404;
+        throw err;
+    }
+    const postLike = await postDao.postLike( postId, userId );
     return postLike;
 };
 

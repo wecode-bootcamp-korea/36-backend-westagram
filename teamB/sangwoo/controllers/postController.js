@@ -2,17 +2,18 @@ const postService = require('../services/postService');
 
 const postRegist = async (req, res) => {
     try {
-    const { title, content, user_id } = req.body;
+        const { userId } = req.params;
+        const { title, content } = req.body;
 
-    if ( !title || !content || !user_id ) {
-        return res.status(400).json({ message: 'KEY_ERROR' });
+        if ( !title || !userId ) {
+            return res.status(400).json({ message: 'KEY_ERROR' });
     }
 
-    await postService.postRegist( title, content, user_id );
-    return res.status(201).json({ message: 'POST_REGISTRATION_SUCCESS' });
+    await postService.postRegist( title, content, userId );
+
+        res.status(201).json({ message: "아주 좋은 게시글이구만" });
     } catch (err) {
-    console.log(err);
-    return res.status(err.statusCode || 500).json({ message: err.message });
+        res.status(err.statusCode || 500).json({ message: err.message });
     }
 };
 
@@ -56,7 +57,7 @@ const updatePost = async (req, res) => {
         await postService.updatePost( 
             userId, postId, title, content
         );
-        return res.status(200).json({ message: "UPDATE POST!"});
+        return res.status(200).json({ message: "POST_CREATED"});
     
         } catch (err) {
             return res.status(err.statusCode || 500).json({
@@ -73,7 +74,7 @@ const deletePost = async (req, res) => {
             return res.status(400).json({ message: 'KEY_ERROR' });
         }
         await postService.deletePost( postId );
-        return res.status(200).json({ message: "DELETE POST!"});
+        return res.status(200).json({ message: "POST_DELETE"});
     
         } catch (err) {
             return res.status(err.statusCode || 500).json({
@@ -90,7 +91,7 @@ const likePost = async (req, res) => {
             return res.status(400).json({ message: 'KEY_ERROR' });
         }
         await postService.likePost( postId, userId );
-        return res.status(200).json({ message: "LIKE POST!"});
+        return res.status(200).json({ message: "POST_LIKE"});
     
         } catch (err) {
             return res.status(err.statusCode || 500).json({
