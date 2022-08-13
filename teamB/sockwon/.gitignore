@@ -104,3 +104,4 @@ dist
 .tern-port
 #dbmate_schema
 schema.sql
+../.DS_Store
