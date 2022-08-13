@@ -3,13 +3,12 @@ const postService = require('../services/postService');
 const postPostings = async (req, res) => {
     try {
         const {title, content, user_id} = req.body;
-        const token = req.headers.authorization;
 
-        if (!title || !content || !user_id || !token) {
+        if (!title || !content || !user_id) {
             return res.status(400).json({message: 'KEY_ERROR'});
         }
 
-        await postService.postPostings(title, content, user_id, token);
+        await postService.postPostings(title, content, user_id);
 
         return res.status(201).json({message: 'postCreated'})
     } catch (err) {

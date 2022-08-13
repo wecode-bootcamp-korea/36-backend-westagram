@@ -1,15 +1,12 @@
 const postDao = require('../models/postDao');
-const jwt = require('jsonwebtoken');
 
-const postPostings = async (title, content, user_id, token) => {
+const postPostings = async (title, content, user_id) => {
     if (typeof(title) != 'string' || typeof(content) != 'string' || typeof(Number(user_id)) != 'number' || user_id == 0) {
         const err = new Error('INVALID INPUTs');
         err.statusCode = 409;
         throw err;
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    
     const postPostings = await postDao.postPostings(
         title,
         content,

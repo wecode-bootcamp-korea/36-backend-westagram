@@ -1,8 +1,8 @@
-const {myDataSource} = require('./dataSource');
+const {myDataSource} = require('../utils/dataSource');
 
 const createUsers = async (name, gender, birth, contact, mbti, email, password) => {
     try {
-        return await myDataSource.query(
+        await myDataSource.query(
             `INSERT INTO users(
                 name,
                 gender,

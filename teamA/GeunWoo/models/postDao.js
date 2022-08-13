@@ -1,4 +1,4 @@
-const {myDataSource} = require('./dataSource');
+const {myDataSource} = require('../utils/dataSource');
 
 const postPostings = async (title, content, user_id) => {
     try {
