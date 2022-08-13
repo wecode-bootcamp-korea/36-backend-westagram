@@ -40,7 +40,7 @@ const getUserPosts = async(req, res) => {
 };
 
 
-const patchPost = async(req, res) => {
+const updatePost = async(req, res) => {
     try{
         const {userId} = req.params;
         const {title, content, postId} = req.body; 
@@ -49,9 +49,9 @@ const patchPost = async(req, res) => {
             return res.status(400).json({message: 'KEY_ERROR'});
         }
 
-        await postService.patchPost(title, content, postId, userId);
+        await postService.updatePost(title, content, postId, userId);
 
-        res.status(201).json({message:'PATCH_POST_SUCCESS'});
+        res.status(201).json({message:'UPDATE_POST_SUCCESS'});
     } catch (err) {
         console.log(err);
         return res.status(err.statusCode||500).json({message: err.message});
@@ -75,6 +75,6 @@ module.exports ={
     createPost,
     getPosts,
     getUserPosts,
-    patchPost,
+    updatePost,
     deletePost
 }

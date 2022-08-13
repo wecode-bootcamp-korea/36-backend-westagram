@@ -16,8 +16,8 @@ const getUserPosts = async (userId) => {
     return await postDao.getPostsByUserId(userId); 
 };
 
-const patchPost = async (title, content, postId, userId) => {
-    return await postDao.patchPostByUserId(
+const updatePost = async (title, content, postId, userId) => {
+    return await postDao.updatePostByUserId(
         title,
         content,
         postId,
@@ -41,6 +41,6 @@ module.exports ={
     createPost,
     getPosts,
     getUserPosts,
-    patchPost,
+    updatePost,
     deletePost
 }

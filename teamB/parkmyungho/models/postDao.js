@@ -80,7 +80,7 @@ const getPostsByUserId = async(userId) =>{
     }
 };
 
-const patchPostByUserId = async(title, content, postId, userId)=>{
+const updatePostByUserId = async(title, content, postId, userId)=>{
     try {
         await appDataSource.query(
             `UPDATE posts 
@@ -140,7 +140,7 @@ module.exports = {
     createPost,
     getAllPosts,
     getPostsByUserId,
-    patchPostByUserId,
+    updatePostByUserId,
     deletePostByPostId,
     getPostByPostId
 }
