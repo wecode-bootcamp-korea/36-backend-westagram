@@ -1,0 +1,15 @@
+-- migrate:up
+CREATE TABLE posts (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    user_id VARCHAR(100) NOT NULL,
+    user_profile_image VARCHAR(2000) NULL,
+    image_url VARCHAR(2000) NULL,
+    content VARCHAR(1000) NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- migrate:down
+
+DROP TABLE posts;
+
