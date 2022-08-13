@@ -1,17 +1,19 @@
-const {myDataSource} = require('./dataSource');
+const {myDataSource} = require('../utils/dataSource');
 
-const createUsers = async (name, gender, birth, contact, mbti) => {
+const createUsers = async (name, gender, birth, contact, mbti, email, password) => {
     try {
-        return await myDataSource.query(
+        await myDataSource.query(
             `INSERT INTO users(
                 name,
                 gender,
                 birth,
                 contact,
-                mbti
-            ) VALUES (?, ?, ?, ?, ?);
+                mbti,
+                email,
+                password
+            ) VALUES (?, ?, ?, ?, ?, ?, ?);
             `,
-            [name, gender, birth, contact, mbti]
+            [name, gender, birth, contact, mbti, email, password]
         );
     } catch (err) {
         const error = new Error('INVALID_DATA_INPUT');
@@ -20,6 +22,29 @@ const createUsers = async (name, gender, birth, contact, mbti) => {
     }
 };
 
+const getUserByEmail = async (email) => {
+    try {
+        const data = await myDataSource.query(
+                        `SELECT 
+                            id,
+                            email,
+                            password
+                        FROM users u
+                        WHERE u.email=?
+                        `,
+                        [email]
+        );
+
+        return data;
+
+    } catch (err) {
+        const error = new Error('INVALID_EMAIL');
+        error.statusCode = 500;
+        throw error;
+    }
+  };
+  
 module.exports = {
-    createUsers
+    createUsers, 
+    getUserByEmail
 }
