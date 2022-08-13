@@ -1,6 +1,4 @@
 const appDataSource = require("./dataSource");
-const bcrypt = require("../middleware/bcypt");
-const jwt = require("../middleware/jwt");
 
 const createPost = (title, content, id)=>{
     try {

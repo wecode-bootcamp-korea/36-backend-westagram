@@ -6,7 +6,7 @@ const router = express.Router();
 const jwt = require('../middleware/jwt')
 
 
-router.post('/newlike', jwt.validationToken ,likeController.newLike);
+router.post('/', jwt.validationToken ,likeController.newLike);
 module.exports = {
     router
 }
