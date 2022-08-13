@@ -1,23 +1,23 @@
 const postDao = require('../models/postDao')
 
-const enrollPost = async (title, content, userId) => {
-    return await postDao.enrollPost(
+const createPost = async (title, content, userId) => {
+    return await postDao.createPost(
         title,
         content,
         userId
     );
 };
 
-const allPost = async () => {
-    return await postDao.allPost();
+const getPosts = async () => {
+    return await postDao.getAllPosts();
 };
 
-const userPost = async (userId) => {
-    return await postDao.userPost(userId); 
+const getUserPosts = async (userId) => {
+    return await postDao.getPostsByUserId(userId); 
 };
 
-const fixPost = async (title, content, postId, userId) => {
-    return await postDao.fixPost(
+const patchPost = async (title, content, postId, userId) => {
+    return await postDao.patchPostByUserId(
         title,
         content,
         postId,
@@ -25,9 +25,22 @@ const fixPost = async (title, content, postId, userId) => {
     );
 };
 
+const deletePost = async(postId)=> {
+    const [post] = await postDao.getPostByPostId(postId)
+    
+    if(!post){
+        const error = new Error('post is already deleted')
+        error.statusCode = 409;
+        throw error;
+    }
+
+    return await postDao.deletePostByPostId(postId);
+ }
+
 module.exports ={
-    enrollPost,
-    allPost,
-    userPost,
-    fixPost
+    createPost,
+    getPosts,
+    getUserPosts,
+    patchPost,
+    deletePost
 }

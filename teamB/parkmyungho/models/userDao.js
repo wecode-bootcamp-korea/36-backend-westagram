@@ -29,7 +29,7 @@ const createUser = async(name, email, profileImage, password)=>{
                 password
             ) VALUES (?,?,?,?);
             `,
-            [name, email, profileImage, password]
+            [name, email, profileImage, password] 
         );
     } catch(err){
         const error = new Error('INVALID_DATA_INPUT');
@@ -38,6 +38,63 @@ const createUser = async(name, email, profileImage, password)=>{
     }
 };
 
+const getUserByEmail = async (email) => {
+    const [user] = await appDataSource.query( 
+      ` SELECT
+            u.id,
+            u.name,
+            u.email,
+            u.profile_image,
+            u.password,
+            u.created_at,
+            u.updated_at
+        FROM users u
+        WHERE u.email = ?
+      `,
+      [email]
+    );
+  
+    return user;
+  };
+
+const getUserByUserId = async(userId) =>{
+    const [user] = await appDataSource.query(
+        `SELECT
+            u.id,
+            u.name,
+            u.email,
+            u.profile_image,
+            u.password,
+            u.created_at,
+            u.updated_at
+        FROM users u
+        WHERE u.id = ?`
+        , [userId]
+    );
+    return user;
+}
+
+const createLike = async(userId, postId) =>{
+    try{
+        await appDataSource.query(
+        `INSERT INTO likes(
+            user_id,
+            post_id
+        )
+        VALUES (?,?)
+        `
+       , [userId, postId]
+        );
+    } catch(err){
+        const error = new Error('INVALID_DATA_INPUT');
+        error.statusCode = 500;
+        throw error;
+    }
+}
+
 module.exports = {
-   createUser
+   createUser,
+   getUserByEmail,
+   getUserByUserId,
+   createLike   
 }

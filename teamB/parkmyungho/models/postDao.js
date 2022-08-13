@@ -18,7 +18,7 @@ appDataSource.initialize()
         appDataSource.destroy();
     });
 
-const enrollPost = async(title, content, userId)=>{
+const createPost = async(title, content, userId)=>{
     try {
         return await appDataSource.query(
             `INSERT INTO posts(
@@ -36,7 +36,7 @@ const enrollPost = async(title, content, userId)=>{
     }
 };
 
-const allPost = async()=>{
+const getAllPosts = async()=>{
     try {
         return await appDataSource.query(
         `SELECT
@@ -55,42 +55,24 @@ const allPost = async()=>{
     }
 };
 
-const userPost = async(userId)=>{
-    try {
-        let userData = await appDataSource.query(
-            `SELECT
-                u.id userId,
-                u.name userName,
-                u.profile_image userProfileImage
-            FROM users u
-            WHERE u.id = ${userId}`)
-    
-        let datas = await appDataSource.query(
+const getPostsByUserId = async(userId) =>{
+    try{
+        return await appDataSource.query(
             `SELECT 
-                p.id postingId,
-                p.title postingTitle,
-                p.content postingContent 
-            FROM posts p
-            INNER JOIN users 
-            ON p.user_id = users.id 
-            WHERE users.id = ${userId}`)
-
-        let posts=[]
-        for (const data of datas) {
-            posts.push({
-                postingId : data['postingId'],
-                postingTitle : data['postingTitle'],
-                postingContent : data['postingContent'],
-            })
-        }
-        const user = {
-            userId : userData[0]['userId'],
-            userName : userData[0]['userName'],
-            userProfileImage : userData[0]['userProfileImage'],
-            post : posts
-        }
-        return  user;
-   
+                postlist
+            FROM (
+                SELECT json_object(
+                'id', u.id,
+                'name', u.name,
+                'profileImage', u.profile_image,
+                'posting', json_arrayagg(json_object(
+                    'title', p.title,
+                    'content', p.content))
+                ) postlist
+                    FROM users u
+                    INNER JOIN posts p ON u.id = p.user_id
+                    WHERE u.id = ${userId}) sub`
+        );
     } catch(err){
         const error = new Error('INVALID_DATA_INPUT');
         error.statusCode = 500;
@@ -98,7 +80,7 @@ const userPost = async(userId)=>{
     }
 };
 
-const fixPost = async(title, content, postId, userId)=>{
+const patchPostByUserId = async(title, content, postId, userId)=>{
     try {
         await appDataSource.query(
             `UPDATE posts 
@@ -127,9 +109,38 @@ const fixPost = async(title, content, postId, userId)=>{
     }
 };
 
+const deletePostByPostId = async(postId)=>{
+    try{
+        await appDataSource.query(
+            `DELETE FROM posts p
+            WHERE p.id = ${postId}`
+        )
+    } catch(err){
+        const error = new Error('INVALID_DATA_INPUT')
+        error.statusCode = 500;
+        throw error;
+    }
+}
+
+const getPostByPostId = async(postId) =>{
+    return await appDataSource.query(
+        `SELECT 
+            p.id,
+            p.title,
+            p.content,
+            p.user_id,
+            p.created_at,
+            p.updated_at
+        FROM posts p
+        WHERE p.id = ${postId};`
+    )
+};
+
 module.exports = {
-    enrollPost,
-    allPost,
-    userPost,
-    fixPost
+    createPost,
+    getAllPosts,
+    getPostsByUserId,
+    patchPostByUserId,
+    deletePostByPostId,
+    getPostByPostId
 }

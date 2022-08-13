@@ -6,8 +6,7 @@ const morgan = require("morgan");
 const dotenv = require("dotenv");
 dotenv.config(); 
 
-const routes = require("./routes"); // 폴더 안에 index가 디폴트 값
-
+const routes = require("./routes"); 
 const app = express();
 
 app.use(cors());

@@ -1,48 +1,46 @@
 const postService = require('../services/postService')
 
-const enrollPost = async(req, res) => {
+const createPost = async(req, res) => {
     try{
         const {title, content, userId} = req.body;
 
         if ( !title || !content || !userId){
-            return res.status(400).json({message: 'KeEY_ERROR'});
+            return res.status(400).json({message: 'KEY_ERROR'});
         }
 
-        await postService.enrollPost(title, content, userId);
+        await postService.createPost(title, content, userId);
 
-        res.status(201).json({message:'ENROLLPOST_SUCCESS'});
+        res.status(201).json({message:'CREATE_POST_SUCCESS'});
     } catch (err) {
-        console.log(err);
         return res.status(err.statusCode||500).json({message: err.message});
     }
 };
 
-const allPost = async(req, res) => {
+const getPosts = async(req, res) => {
     try{
-        await postService.allPost();
+        await postService.getPosts();
 
-        res.status(200).json({message:'ALLPOST_SUCCESS'});
+        res.status(200).json({message:'GET_POSTS_SUCCESS'});
     } catch (err) {
-        console.log(err);
         return res.status(err.statusCode||500).json({message: err.message});
     }
 };
 
-const userPost = async(req, res) => {
+const getUserPosts = async(req, res) => {
     try{
         const { userId } = req.params;
 
-        await postService.userPost(userId);
+        await postService.getUserPosts(userId);
 
-        res.status(201).json({message:'USERPOSTS_SUCCESS'});
+        res.status(201).json({message:'GET_USERPOSTS_SUCCESS'});
     } catch (err) {
-        console.log(err);
+
         return res.status(err.statusCode||500).json({message: err.message});
     }
 };
 
 
-const fixPost = async(req, res) => {
+const patchPost = async(req, res) => {
     try{
         const {userId} = req.params;
         const {title, content, postId} = req.body; 
@@ -51,18 +49,32 @@ const fixPost = async(req, res) => {
             return res.status(400).json({message: 'KEY_ERROR'});
         }
 
-        await postService.fixPost(title, content, postId, userId);
+        await postService.patchPost(title, content, postId, userId);
 
-        res.status(201).json({message:'FIXPOST_SUCCESS'});
+        res.status(201).json({message:'PATCH_POST_SUCCESS'});
     } catch (err) {
         console.log(err);
         return res.status(err.statusCode||500).json({message: err.message});
     }
 };
 
+const deletePost = async(req, res) =>{
+    try{
+        const {postId} = req.params;
+        
+        await postService.deletePost(postId);
+
+        res.status(201).json({message: 'DELETE_POST_SUCCESS'})
+
+    } catch(err){
+        return res.status(err.statusCode||500).json({message: err.message})
+    }
+}
+
 module.exports ={
-    enrollPost,
-    allPost,
-    userPost,
-    fixPost
+    createPost,
+    getPosts,
+    getUserPosts,
+    patchPost,
+    deletePost
 }
