@@ -1,18 +1,34 @@
-const { Database, initialize } = require("./Database.js");
+const { Database } = require("./Database.js");
 
-const createUser = async ( user_id, password, name, age ) => {
+const checkId = async ( email ) => {
+	try {
+		const post = await Database.query(
+		`
+			SELECT EXISTS (SELECT u.id FROM users u WHERE u.id = '${email}')
+		`,
+  );
+		return post
+	} catch (err) {
+		const error = new Error('INVALID_DATA_INPUT');
+		error.statusCode = 500;
+		throw error;
+	}
+};
+
+
+const createUser = async ( email, password, name, age ) => {
 	try {
 		return await Database
 	.query(
 		`INSERT INTO users(
-			id, 
+			email, 
 			password, 
 			name, 
 			age
 		) VALUES (?, ?, ?, ?);
 		`,
-		[ user_id, password, name, age ]
-	  );
+		[ email, password, name, age ]
+	);
 	} catch (err) {
 		const error = new Error('INVALID_DATA_INPUT');
 		error.statusCode = 500;
@@ -21,5 +37,6 @@ const createUser = async ( user_id, password, name, age ) => {
 };
 
 module.exports = {
-  createUser
+  createUser,
+	checkId
 }

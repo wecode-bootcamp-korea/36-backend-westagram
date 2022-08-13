@@ -1,9 +1,8 @@
 const postDao = require('../models/postDao')
 
-
-const posting = async (user_id, title, post) => {
+const posting = async (userId, title, post) => {
   const posting = await postDao.posting(
-    user_id, 
+    userId, 
     title, 
     post
     )
@@ -15,23 +14,30 @@ const postAll = async () => {
     return posting;
 };
   
-const postUser = async ( id ) => {
-  const posting = await postDao.viewUser( id );
+const postUser = async (userId) => {
+
+  if (await postDao.viewUser(userId) == false){
+    throw new Error('USER_IS_NOT_EXISTED')
+  }
+  const posting = await postDao.viewUser(userId);
     return posting
 };
   
-const postDelete = async ( no, id ) => {
-  const postDelete = await postDao.postDelete( no, id );
+const postDelete = async ( postId, userId ) => {
+  const postDelete = await postDao.postDelete( postId, userId );
     return postDelete
 };
   
-const postUpdate = async ( no, title, post ) => {
-  const postUpdate = await postDao.postUpdate( no, title, post );
-    return postUpdate
+const postUpdate = async ( postId, title, post ) => {
+  if (await postDao.checkPostExist(postId) == false) {
+    throw new Error('POSTING_IS_NOT_EXISTED')
+  }  
+    const postUpdate = await postDao.postUpdate( postId, title, post );
+      return postUpdate
 };
   
-const postLike = async ( no, id ) => {
-  const postLike = await postDao.postLike( no, id );
+const postLike = async ( postId, userId ) => {
+  const postLike = await postDao.postLike( postId, userId );
     return postLike;
 };
 

@@ -1,16 +1,16 @@
 
 const { Database } = require("./Database.js");
 
-const posting = async ( user_id, title, post ) => {
+const posting = async ( userId, title, post ) => {
 	try {
 		return await Database.query(
-			    `INSERT INTO posts(
-			      user_id,
-			      title,
-			      post
-			    ) VALUES (?, ?, ?)
-			    `, [ user_id, title, post ]
-			  )
+				`INSERT INTO posts(
+					user_id,
+					title,
+					post
+				) VALUES (?, ?, ?)
+				`, [ userId, title, post ]
+			);
 	} catch (err) {
 		const error = new Error('INVALID_DATA_INPUT');
 		error.statusCode = 500;
@@ -22,9 +22,9 @@ const viewAll = async ( ) => {
 	try {
 		return await Database.query(
       `SELECT 
-       user_id,
-       title,
-       post
+			id,
+			title,
+			post
         FROM posts`,
     )
 	} catch (err) {
@@ -35,24 +35,24 @@ const viewAll = async ( ) => {
 }
 
 
-const viewUser = async ( id ) => {
+const viewUser = async ( userId ) => {
 	try {
 		return await Database.query(
       `
-			SELECT posts
-			FROM (
-				SELECT json_object(
-					'no', u.no,
-					'id', u.id,
-					'posting', 
-					json_arrayagg(json_object(
-						'title', p.title,
-						'post', p.post)
-					)
-				) posts 
-					FROM users u
-					INNER JOIN posts p on u.no = p.user_id
-					WHERE u.no = ${id} GROUP BY u.no, u.name) sub;
+      SELECT posts
+				FROM (
+					SELECT json_object(
+						'id', u.id,
+							'email', u.email,
+							'posting', json_arrayagg(json_object(
+							'title', p.title,
+							'post', p.post)
+								)
+					) posts   
+						FROM users u
+						INNER JOIN posts p on u.id = p.user_id
+						WHERE u.id = ${userId} GROUP BY u.id, u.name) sub;
+
       `,  
       
     )
@@ -64,8 +64,7 @@ const viewUser = async ( id ) => {
 }
 
 
-const postUpdate = async (  no, title, post  ) => {
-	console.log(title);
+const postUpdate = async (  id, title, post  ) => {
 	try {
 		return await Database.query(
       `UPDATE posts 
@@ -73,7 +72,7 @@ const postUpdate = async (  no, title, post  ) => {
       title = ?, 
       post = ? 
       WHERE 
-      posts.no = ${no}
+      posts.id = ${id}
       `, [ title, post ]
     );
 
@@ -84,11 +83,11 @@ const postUpdate = async (  no, title, post  ) => {
 	}		
 }
 
-const postDelete = async (  no, id  ) => {
+const postDelete = async (  postId, userId  ) => {
 	try {
 		return await Database.query(
           `DELETE FROM posts
-          WHERE posts.no = ${no} AND posts.user_id = ${id}
+          WHERE posts.id = ${postId} AND posts.user_id = ${userId}
           `,
     )
 	} catch (err) {
@@ -98,18 +97,36 @@ const postDelete = async (  no, id  ) => {
 	}		
 }
 
-const postLike = async (  no, id) => {
+const postLike = async ( postId, userId ) => {
 	try {
 		return await Database.query(
 		`INSERT INTO likes (
       post_id,
-      user_id 
+      userId
         ) VALUES (?, ?);
 		`,
-		[ no, id ]
-	  );
+		[ postId, userId ]
+	);
 	} catch (err) {
 		const error = new Error('ALREADY_LIKE_POST');
+		error.statusCode = 500;
+		throw error;
+	}
+};
+
+const checkPostExist = async ( id ) => {
+	try {
+		const post = await Database.query(
+		`
+			SELECT * FROM posts 
+			WHERE EXISTS 
+			(SELECT p.id, p.user_id, p.title, p.post FROM posts p WHERE posts.id = ${id})
+		`,
+	);
+		console.log(post)
+		return post
+	} catch (err) {
+		const error = new Error('INVALID_DATA_INPUT');
 		error.statusCode = 500;
 		throw error;
 	}
@@ -121,5 +138,6 @@ module.exports = {
 	postLike,
 	postUpdate,
 	viewUser,
-	viewAll
+	viewAll,
+	checkPostExist
 }
