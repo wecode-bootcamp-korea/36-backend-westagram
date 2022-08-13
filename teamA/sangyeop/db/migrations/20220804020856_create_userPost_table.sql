@@ -1,11 +1,10 @@
 -- migrate:up
 CREATE TABLE posts (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    userId VARCHAR(100) NOT NULL,
-    userProfileImage VARCHAR(2000) NULL,
-    postingId VARCHAR(1000) NOT NULL,
-    postingImageUrl VARCHAR(2000) NULL,
-    postingContent VARCHAR(1000) NULL,
+    user_id VARCHAR(100) NOT NULL,
+    user_profile_image VARCHAR(2000) NULL,
+    image_url VARCHAR(2000) NULL,
+    content VARCHAR(1000) NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );

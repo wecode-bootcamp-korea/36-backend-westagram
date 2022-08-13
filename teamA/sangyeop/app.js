@@ -7,9 +7,9 @@ const morgan = require("morgan");
 const dotenv = require("dotenv");
 dotenv.config()
 
-const { DataSource } = require('typeorm');
+const { DataSource, OneToMany } = require('typeorm');
 
-const myDataSource = new DataSource({
+const database = new DataSource({
   type: 'mysql',
   host: process.env.TYPEORM_HOST,
   port: process.env.TYPEORM_PORT,
@@ -18,7 +18,7 @@ const myDataSource = new DataSource({
   database: process.env.TYPEORM_DATABASE
 })
 
-myDataSource.initialize()
+database.initialize()
   .then(() => {
     console.log("Data Source has been initialized");
   })
@@ -33,128 +33,128 @@ app.get("/ping", (req,res) => {
 
 
 //singup
-app.post('/userId', async (req, res, next) => {
-  const { name, email, profileImage, password } = req.body;
+app.post('/users', async (req, res, next) => {
+  const { name, email, profile_image, password } = req.body;
 
-  await myDataSource.query(
-      `INSERT INTO userId(
+  await database.query(
+      `INSERT INTO users(
           name,
           email,
-          profile_Image,
+          profile_image,
           password
       ) VALUES (?, ?, ?, ?);
       `,
-      [name, email, profileImage, password]);
+      [name, email, profile_image, password]);
 
       res.status(200).json({ message : "userCreated"});
 });
 
-
-app.get('/get/userId', async (req, res, next) => {
-  await myDataSource.query(
+//users list
+app.get('/users-list', async (req, res) => {
+  await database.query(
       `SELECT
           name,
           email,
-          profile_Image,
+          profile_image,
           password
-          FROM userId;`
-          ,(err, rows) =>{
-
+          FROM users;`)
+        
       res.status(200).json(rows);
-    });
+    ;
   });
-  
-
 
 //게시글posts
-app.post('/posts', async (req, res, next) => {
-  const { userId, userProfileImage, postingId, postingImageUrl, postingContent} = req.body;
+app.post('/post', async (req, res, next) => {
+  const {user_id, user_profile_image, image_url, Content} = req.body;
 
-  await myDataSource.query (
+  await database.query (
       `INSERT INTO posts(
-          userId,
-          userProfileImage,
-          postingId,
-          postingImageUrl,
-          postingContent
-      ) VALUES (?, ?, ?, ?, ?);
+        user_id,
+        user_profile_image,
+        image_url,
+        content
+      ) VALUES (?, ?, ?, ?);
       `,
-      [userId, userProfileImage, postingId, postingImageUrl, postingContent]);
+      [user_id, user_profile_image, image_url, Content]);
 
-      res.status(201).json({ message : "postCreated"});
+      res.status(201).json({ message : "postCr eated"});
 });
 
 //전체게시글 조회
-app.get('/get/posts', async(req, res, next) => {
-  await myDataSource.query(
+app.get('/posts-list', async(req, res) => {
+  const postslist = await database.query(
   `SELECT 
-    userId,
-    userProfileImage,
-    postingId,
-    postingImageUrl,
-    postingContent
-    FROM posts`
-  ,(err, rows) => {
-    res.status(200).json(rows);
-});
-});
+    u.id userId,
+    u.profile_image userProfileImage,
+    p.user_id postingId,
+    p.image_url postingImageUrl,
+    p.content postingContent
+    FROM posts p
+    INNER JOIN users u
+    ON u.id = p.user_id;`
+  )
+    res.status(200).json({ data : postslist });
+  });
+
 
 //유저게시글 조회 - 진행중
-app.get('/get/posts/:userId', async (req, res) => {
+/*app.get('/get/posts/:userId', async (req, res) => {
   const { userId } = req.params;
-  const data = await myDataSource.query(
+  const data = await database.query(
       `SELECT
-              p.id as postingId,
-              p.postingId,
-              p.postingContent,
-              p.userId
-      FROM posts p
-      WHERE p.userId = ${userId}
+        p.postingContent,
+        p.userId
+        FROM posts p
+        WHERE p.userId = ${userId}
       `);
   let obj = {
       "1.userId": `${userId}`,
       "2.name": parseInt(
-         await myDataSource.query(`select u.name from userId u`)) //쿼리문 삽입으로해결 방안 찾기
+         await dayabase.query(`select u.name from userId u`)) //쿼리문 삽입으로해결 방안 찾기
       // userProfileImage: parseInt(profile_Image)
   };
   obj["postings"] = data;
   res.status(200).json({ "data": obj })
 
 });
+*/ 
 
 //게시글 수정
-app.patch('/patch/posts/:id', function(req, res){
-  const id = req.params.id
-  const content = req.body.content
-  myDataSource.query(`
-      UPDATE posts 
-          SET ? WHERE id = ${id}`, 
-          {postingContent :content}
-      )
+app.patch('/patch/:userId/:postId', (req, res) => {
+  const { userId, postId } = req.params;
+  const { title, content } = req.body;
+  database.query(
+      `UPDATE posts
+      SET
+          title = "${title}",
+          content = "${content}"
+      WHERE id = ${postId};`)
 
-  res.status(201).json({message: "UpdatedSuccess"});
-})
-
-
+  database.query(
+      `SELECT
+              u.id as userId,
+              u.name as userName,
+              p.id as postingId,
+              p.title as postingTitle,
+              p.content as postingContent
+      FROM users u, posts p
+      WHERE u.id = ${userId} AND p.id = ${postId};
+      `,(err,rows) => {
+          res.status(201).json({ data : rows });
+      });
+});
 
 //게시글 삭제
-app.delete("/delete/posts/:postingId", async (req, res) => {
+app.delete("/delete/post/:userId", async (req, res) => {
   const { postingId } = req.params;
 
-  await myDataSource.query(
+  await database.query(
       `DELETE FROM posts
-      WHERE posts.id = ${postingId}`
+       WHERE posts.id = ${postingId}`
   );
   res.status(200).json({ message: "postingDeleted" });
 }); 
  
-
-
-//좋아요
-
-
-
-
 const server = http.createServer(app);
 const PORT = process.env.PORT;
 
