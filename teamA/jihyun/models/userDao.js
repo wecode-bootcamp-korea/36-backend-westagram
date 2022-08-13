@@ -8,10 +8,9 @@ const createUser = async (email, password) => {
       `INSERT INTO users(
 			  email,
 			  password
-		 ) VALUES (?, ?);
-		`,
+		 ) VALUES (?, ?)`,
 
-      [ email, password ]
+      [email, password]
     );
   } catch (err) {
     const error = new Error("INVALID_DATA_INPUT");
@@ -39,26 +38,33 @@ const existUser = async (email) => {
 
 const getUserByEmail = async (email) => {
   const [user] = await database.query(
-    `
-      SELECT *
-      FROM users
-      WHERE email = ?
-    `,
+    `SELECT *
+     FROM users
+     WHERE email = ?`,
     [email]
   );
 
   return user;
 };
 
-// 암호화된 비번
+const getUserByuserId = async (userId) => {
+  const [user] = await database.query(
+    `SELECT *
+     FROM users
+     WHERE id = ?`,
+    [userId]
+  );
+
+  return user;
+};
+
 const validPwd = async (email) => {
   try {
     return await database.query(
-      `SELECT 
-		 users.password
-	   FROM users
-	   WHERE
-	   email = ?`,
+     `SELECT 
+		  users.password
+	    FROM users
+	    WHERE email = ?`,
       [email]
     );
   } catch (err) {
@@ -68,4 +74,4 @@ const validPwd = async (email) => {
   }
 };
 
-module.exports = { createUser, existUser, validPwd, getUserByEmail };
+module.exports = { createUser, existUser, validPwd, getUserByEmail, getUserByuserId };

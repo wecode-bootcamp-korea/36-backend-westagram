@@ -1,28 +1,24 @@
 //middlewares/auth.js
 
+const userDao = require("../models/userDao");
 const jwt = require("jsonwebtoken");
 
 const validateToken = async (req, res, next) => {
   try {
     const headers = req.headers["authorization"];
     const accessToken = headers.split(" ")[1];
+    const decode = jwt.verify(accessToken, process.env.JWT_SECRET);
+    const userId = decode.id;
+    const user = await userDao.getUserByuserId(userId);
 
-    if (!accessToken) {
-      res.status(401).send({ message: "NOT_EXIST_TOKEN" });
-    } else {
-      jwt.verify(accessToken, process.env.JWT_SECRET, (err, payload) => {
-        if (err) {
-          res.status(403).send({ error: err });
-        } else {
-          req.payload = payload;
-        }
-      });
+    if (!user) {
+      res.status(404).json({ message: "USER_NOT_FOUND" });
+    }else{
+      req.userId = userId;
+      next();
     }
-
-    next();
   } catch (err) {
     next(err);
-    return res.status(err.statusCode || 403).json({ message: err.message });
   }
 };
 

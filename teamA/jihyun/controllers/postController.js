@@ -5,7 +5,7 @@ const postService = require("../services/postService");
 const post = async (req, res) => {
   try {
     const { title, content } = req.body;
-    const userId = req.payload.id;
+    const userId = req.userId;
 
     if ( !userId || !title || !content) {
       return res.status(400).json({ message: "KEY_ERROR" });
