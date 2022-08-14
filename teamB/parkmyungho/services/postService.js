@@ -29,8 +29,8 @@ const deletePost = async(postId)=> {
     const [post] = await postDao.getPostByPostId(postId)
     
     if(!post){
-        const error = new Error('post is already deleted')
-        error.statusCode = 409;
+        const error = new Error('specified post does not exist')
+        error.statusCode = 404;
         throw error;
     }
 

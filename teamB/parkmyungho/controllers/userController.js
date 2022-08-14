@@ -25,7 +25,7 @@ const signIn = async(req, res) => {
             return res.status(400).json({message: 'KEY_ERROR'});
         }
         const accessToken = await userService.signIn(email, password);
-        res.status(201).json({message:'SIGNIN_SUCCESS'})
+        res.status(201).json({message:'SIGNIN_SUCCESS'}).setHeader(`token:${accessToken}`)
 
     } catch (err) {
         return res.status(err.statusCode||500).json({message: err.message});
@@ -38,7 +38,7 @@ const postLike = async(req,res) =>{
         const {userId} = req.body;
 
         await userService.likePost(userId, postId);
-        res.status(200).json({message: 'POSTLIKE_SUCCESS'})
+        res.status(201).json({message: 'POSTLIKE_SUCCESS'})
     } catch(err) {
         return res.status(err.statusCode||500).json({message: err.message});
     }

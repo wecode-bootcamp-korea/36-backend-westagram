@@ -18,9 +18,9 @@ const createPost = async(req, res) => {
 
 const getPosts = async(req, res) => {
     try{
-        await postService.getPosts();
+        const postsList = await postService.getPosts();
 
-        res.status(200).json({message:'GET_POSTS_SUCCESS'});
+        res.status(200).json({data: postsList});
     } catch (err) {
         return res.status(err.statusCode||500).json({message: err.message});
     }
@@ -30,15 +30,13 @@ const getUserPosts = async(req, res) => {
     try{
         const { userId } = req.params;
 
-        await postService.getUserPosts(userId);
+        const postsList = await postService.getUserPosts(userId);
 
-        res.status(201).json({message:'GET_USERPOSTS_SUCCESS'});
+        res.status(200).json({data: postsList});
     } catch (err) {
-
         return res.status(err.statusCode||500).json({message: err.message});
     }
 };
-
 
 const updatePost = async(req, res) => {
     try{
@@ -53,7 +51,6 @@ const updatePost = async(req, res) => {
 
         res.status(201).json({message:'UPDATE_POST_SUCCESS'});
     } catch (err) {
-        console.log(err);
         return res.status(err.statusCode||500).json({message: err.message});
     }
 };
@@ -64,7 +61,7 @@ const deletePost = async(req, res) =>{
         
         await postService.deletePost(postId);
 
-        res.status(201).json({message: 'DELETE_POST_SUCCESS'})
+        res.status(200).json({message: 'DELETE_POST_SUCCESS'})
 
     } catch(err){
         return res.status(err.statusCode||500).json({message: err.message})

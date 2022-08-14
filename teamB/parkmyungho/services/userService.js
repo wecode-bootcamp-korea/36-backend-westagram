@@ -5,17 +5,18 @@ const userDao = require('../models/userDao')
 const validators = require('../utils/validators') 
 
 const signUp = async (name, email, profileImage, password) => {
-    validators.validateEmail(email);
-    validators.validatePw(password);
-
-    const user = await userDao.getUserByEmail(email);
-
-    if(user) {
-        const error = new Error("duplicated email");
-        error.statusCode = 409;
-        throw error;
-    }
- 
+  
+  const user = await userDao.getUserByEmail(email);
+  
+  if(user) {
+    const error = new Error("duplicated email");
+    error.statusCode = 409;
+    throw error;
+  }
+  
+  validators.validateEmail(email);
+  validators.validatePw(password);
+  
     const hashedPassword = await bcrypt.hash(password, 10);
     await userDao.createUser( 
         name,
