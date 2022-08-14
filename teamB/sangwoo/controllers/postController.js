@@ -1,15 +1,17 @@
 const postService = require('../services/postService');
 
+
 const postRegist = async (req, res) => {
     try {
         const { userId } = req.params;
         const { title, content } = req.body;
+        const token = req.headers.authorization;
+        if ( (!title || !userId) && !token) {
 
-        if ( !title || !userId ) {
             return res.status(400).json({ message: 'KEY_ERROR' });
     }
 
-    await postService.postRegist( title, content, userId );
+    await postService.postRegist( title, content, userId, token );
 
         res.status(201).json({ message: "아주 좋은 게시글이구만" });
     } catch (err) {
