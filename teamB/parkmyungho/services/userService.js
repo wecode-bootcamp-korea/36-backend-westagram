@@ -2,26 +2,11 @@ const jwt = require("jsonwebtoken")
 const bcrypt = require("bcrypt");
 
 const userDao = require('../models/userDao')
-
+const validators = require('../utils/validators') 
 
 const signUp = async (name, email, profileImage, password) => {
-    const pwValidation = new RegExp(
-        /^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,20})/
-    );
-    if(!pwValidation.test(password)) {
-        const error = new Error('PASSWORD_IS_NOT_VALID');
-        err.statusCode = 409;
-        throw error;
-    }
-
-    const emailValidation = new RegExp(
-        /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i
-    );
-    if (!emailValidation.test(email)){
-        const error = new Error ('EMAIL_INVALID')
-        error.statusCode = 400
-        throw error;
-    }
+    validators.validateEmail(email);
+    validators.validatePw(password);
 
     const user = await userDao.getUserByEmail(email);
 
@@ -52,7 +37,7 @@ const signIn = async (email, password) => {
     const result = await bcrypt.compare(password, user.password);
   
     if (!result) {
-      const error= new Error("invalid password");
+      const error= new Error("password is not valid");
       error.statusCode = 400;
       throw error;
     }
