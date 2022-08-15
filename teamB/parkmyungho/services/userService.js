@@ -6,7 +6,7 @@ const validators = require('../utils/validators')
 
 const signUp = async (name, email, profileImage, password) => {
   
-  const user = await userDao.getUserByEmail(email);
+  const [user] = await userDao.getUserByEmail(email);
   
   if(user) {
     const error = new Error("duplicated email");

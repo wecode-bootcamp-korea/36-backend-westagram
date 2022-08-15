@@ -25,7 +25,8 @@ const signIn = async(req, res) => {
             return res.status(400).json({message: 'KEY_ERROR'});
         }
         const accessToken = await userService.signIn(email, password);
-        res.status(201).json({message:'SIGNIN_SUCCESS'}).setHeader(`token:${accessToken}`)
+        res.status(201).json({message:'SIGNIN_SUCCESS', token: accessToken})
+
 
     } catch (err) {
         return res.status(err.statusCode||500).json({message: err.message});

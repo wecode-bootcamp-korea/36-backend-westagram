@@ -21,7 +21,7 @@ const createUser = async(name, email, profileImage, password)=>{
 };
 
 const getUserByEmail = async (email) => {
-    const [user] = await appDataSource.query( 
+    return await appDataSource.query( 
       ` SELECT
             u.id,
             u.name,
@@ -35,8 +35,6 @@ const getUserByEmail = async (email) => {
       `,
       [email]
     );
-  
-    return user;
   };
 
 const getUserByUserId = async(userId) =>{

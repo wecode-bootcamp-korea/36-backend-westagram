@@ -22,10 +22,10 @@ const getAllPosts = async()=>{
     try {
         return await appDataSource.query(
         `SELECT
-            users.id UserId,
+            users.id userId,
             users.profile_image userProfileImage,
             posts.id postingId,
-            posts.title postingImageUrl,
+            posts.title postingTitle,
             posts.content posingContent
         FROM users
         Inner Join posts ON users.id=posts.user_id`
@@ -93,7 +93,7 @@ const updatePostByUserId = async(title, content, postId, userId)=>{
 
 const deletePostByPostId = async(postId)=>{
     try{
-        await appDataSource.query(
+        return await appDataSource.query(
             `DELETE FROM posts p
             WHERE p.id = ${postId}`
         )
@@ -105,7 +105,8 @@ const deletePostByPostId = async(postId)=>{
 }
 
 const getPostByPostId = async(postId) =>{
-    return await appDataSource.query(
+    try{
+        return await appDataSource.query(
         `SELECT 
             p.id,
             p.title,
@@ -116,6 +117,11 @@ const getPostByPostId = async(postId) =>{
         FROM posts p
         WHERE p.id = ${postId};`
     )
+    } catch(err){
+        const error = new Error('INVALID_DATA_INPUT')
+        error.statusCode = 500;
+        throw error;
+    }
 };
 
 module.exports = {
