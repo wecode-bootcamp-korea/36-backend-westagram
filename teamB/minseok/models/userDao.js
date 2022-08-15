@@ -1,22 +1,32 @@
 const myDataSource = require('./myDataSource');
 
+
+const getUser = async (name) => {
+	const [user] = await myDataSource.query(
+	  `	SELECT *
+		FROM users_table u
+		WHERE u.name = ? 
+	  `,
+	  [name]
+	  );
+	return user;
+  };
+
 const createUser = async (name, birth, contact, password) => {
-	try {
+	try {console.log(typeof(password))
 		return await myDataSource.query(
 		`INSERT INTO users_table(
 			name,
 			birth,
 			contact,
-			password,
-		) VALUES (?, ?, ?, ?); 
-		`,
+			password
+			) VALUES (?, ?, ?, ?); `,
 		[name, birth, contact, password]
-	  );} 
-	  	catch (err) {
-		const error = new Error('INVALID_DATA_INPUT');
-		error.statusCode = 500;
-		throw error;
-	}
+		)} 
+	catch (err) {
+	const error = new Error('INVALID_DATA_INPUT');
+	error.statusCode = 500;
+	throw error;}
 };
 
 const createUserList = async (userId) => {
@@ -35,8 +45,7 @@ const createUserList = async (userId) => {
 	catch{const error = new Error('INVALID_DATA_INPUT');
 	error.statusCode = 500;
 	throw error;}
-	
 }
 
 
-module.exports = {createUser, createUserList}
+module.exports = {getUser, createUser, createUserList}

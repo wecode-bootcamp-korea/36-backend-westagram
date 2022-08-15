@@ -27,4 +27,18 @@ const searchUserList = async (req, res) => {
         return res.status(err.statusCode || 500).json({ message: err.message });
   }}
 
-module.exports = {signUp, searchUserList}
+
+const signIn = async (req, res) => {
+    try { const {name, password} = req.body;
+
+        if ( !name || !password ) {
+            return res.status(400).json({ message: 'KEY_ERROR' });
+}
+        const accessTaken = await userService.signIn(name, password);
+    
+        res.status(201).json({accessToken: accessTaken});
+}
+    catch (err) {console.log(err);
+        return res.status(err.statusCode || 500).json({ message: err.message });
+  }}
+module.exports = {signUp, searchUserList, signIn}
