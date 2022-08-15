@@ -14,7 +14,7 @@ const signUp = async (name, birth, contact, password) => {
         const user = await userDao.getUser(name, contact);
         
         if (user.contact === contact) {
-            const err = new Error("YOU_ARE_ALREADY_EXISTED");
+            const err = new Error("INVAILD USER");
             err.statusCode = 409;
             throw err;
           }
@@ -34,20 +34,16 @@ const signIn = async (name, password) => {
         if(!checkoutName) {const err = new Error("INVAILD NAME");
         err.statusCode = 409;
         throw err;}
-        console.log(password)
+        
         const checkoutPassword = await bcrypt.compare(password, checkoutName.password);
         if(!checkoutPassword) {const err = new Error("INVAILD PASSWORD");
         err.statusCode = 409;
         throw err;} 
     
-        return jwt.sign({
-            "iss": "minseok",
-            "exp": 1485270000000,
-            "https://dnjscksdn98.com/jwt_claims/is_admin": true,
-            "userId": "minseok",
-            }, process.env.JWT_SECRET)
+        return jwt.sign({sub: checkoutName.name, contact: checkoutName.contact},process.env.JWT_SECRET)
                 }; 
-    
+
+                
 module.exports = {signUp, searchUserList, signIn}
 
  
